@@ -6,82 +6,205 @@
 <link rel="stylesheet" href="etc/style.css" type="text/css">
 
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
-<!-- <script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
+<!-- 
+
+<script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
 <script src="http://github.com/cowboy/jquery-hashchange/raw/v1.3/jquery.ba-hashchange.min.js" type="text/javascript"></script>
  -->
 
-<script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
 
 
 <script type="text/javascript">
 <!--
 
-/*
-  function resizeContent() {
-    var content = $("content");
-    var rightMargin = parseInt(getStyle(content, "right"));
-    var bottomMargin = parseInt(getStyle(content, "bottom"));
+//osm prašný most, cestička bohdalec
 
-    content.style.width = document.documentElement.clientWidth - content.offsetLeft - rightMargin;
-    content.style.height = document.documentElement.clientHeight - content.offsetTop - bottomMargin;
-  }
-  
-  function resizeMap() {
-    var centre = map.getCenter();
-    var zoom = map.getZoom();
-    var sidebar_width = $("sidebar").offsetWidth;
-
-    if (sidebar_width > 0) {
-      sidebar_width = sidebar_width + 5
-    }
-
-    $("map").style.left = (sidebar_width) + "px";
-    $("map").style.width = ($("content").offsetWidth - sidebar_width) + "px";
-    $("map").style.height = ($("content").offsetHeight - 2) + "px";
-
-    map.setCenter(centre, zoom);
-  }
-
-  function handleResize() {
-    if (brokenContentSize) {
-      resizeContent();
-    }
-
-    resizeMap();
-  }
-  
-  mapInit();
-
-//  window.onload = handleResize;
-  //window.onresize = handleResize;
-
-
-#content {
-  padding: 0px;
-  margin: 0px;
-  position: absolute; 
-  right: 10px;
-  bottom: 10px;
-  line-height: 1.2em;
-  text-align: left;
+var map_init = function(){
+	var map = new OpenLayers.Map('map');
+	
+	map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
+	map.addControl(new OpenLayers.Control.LayerSwitcher());
+	map.setCenter( new OpenLayers.LonLat(14.3, 50.1).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 
+		14);
 }
+
+
+$(function(){
+
+	$('#leftpanel_toggle').toggle(
+		function (){
+			$('#leftpanel_toggle').html('&raquo;');
+			$('.leftpanel').hide();
+			$('.middlepanel').css('margin-left', 0);
+		},
+		function (){
+			$('#leftpanel_toggle').html('&laquo;');
+			$('.leftpanel').show();
+			$('.middlepanel').css('margin-left', 271);
+		}
+	);
+
+	$('#rightpanel_toggle').toggle(
+		function (){
+			$('#rightpanel_toggle').html('&raquo; mapy');
+			$('.rightpanel').css('width', '200px');
+			$('.middlepanel').css('margin-right', 200);
+		},
+		function (){
+			$('#rightpanel_toggle').html('&laquo; mapy');
+			$('.rightpanel').css('width', '60px');
+			$('.middlepanel').css('margin-right', 60);
+		}
+	);
+
+
+
+
+
+	//autocomplete nominatim
+	var cache = {},
+			lastXhr;
+		$( "#search-autocomplete" ).autocomplete({
+			minLength: 2,
+			source: function( request, response ) {
+				/*var term = request.term;
+				if ( term in cache ) {
+					response( cache[ term ] );
+					return;
+				}
 */
 
 
-var map_init = function(){
 
-           var map = new OpenLayers.Map('map');
+			$.ajax({
+					url: "http://nominatim.openstreetmap.org/search",
+					dataType: "jsonp",
+					jsonp: 'json_callback',
+					data: {
+						q: request.term,
+						format: "json",
+						limit: 12
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								label: item.display_name,
+								value: item.osm_id
+							}
+						}));
+					}
+				});
 
-            map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
-            map.addControl(new OpenLayers.Control.LayerSwitcher());
-	          map.setCenter(new OpenLayers.LonLat(14.3, 50.1).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 
-							14);
 
 
-      
-}
+				/*lastXhr = $.getJSON( "?", request, function( data, status, xhr ) {
+					cache[ term ] = data;
+					if ( xhr === lastXhr ) {
+						response( data );
+					}
+				});*/
+			}
+		});
+
+
+
+
+/*
+
+[{
+    "place_id": "38656",
+    "licence": "Data Copyright OpenStreetMap Contributors, Some Rights Reserved. CC-BY-SA 2.0.",
+    "osm_type": "node",
+    "osm_id": "26270934",
+    "boundingbox": ["49.9276559", "50.2476559", "14.2612127", "14.5812127"],
+    "lat": "50.0876559",
+    "lon": "14.4212127",
+    "display_name": "Praha, Hlavní město Praha, 19, CZ01, Česká republika, Europe",
+    "class": "place",
+    "type": "city",
+    "icon": "http://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png"
+},
+
+
+		var projects = [
+			{
+				value: "jquery",
+				label: "jQuery",
+				desc: "the write less, do more, JavaScript library",
+				icon: "jquery_32x32.png"
+			},
+			{
+				value: "jquery-ui",
+				label: "jQuery UI",
+				desc: "the official user interface library for jQuery",
+				icon: "jqueryui_32x32.png"
+			},
+			{
+				value: "sizzlejs",
+				label: "Sizzle JS",
+				desc: "a pure-JavaScript CSS selector engine",
+				icon: "sizzlejs_32x32.png"
+			}
+		];
+
+		$( "#project" ).autocomplete({
+			minLength: 0,
+			source: projects,
+			focus: function( event, ui ) {
+				$( "#project" ).val( ui.item.label );
+				return false;
+			},
+			select: function( event, ui ) {
+				$( "#project" ).val( ui.item.label );
+				$( "#project-id" ).val( ui.item.value );
+				$( "#project-description" ).html( ui.item.desc );
+				$( "#project-icon" ).attr( "src", "images/" + ui.item.icon );
+
+				return false;
+			}
+		})
+		.data( "autocomplete" )._renderItem = function( ul, item ) {
+			return $( "<li></li>" )
+				.data( "item.autocomplete", item )
+				.append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
+				.appendTo( ul );
+		};
+
+*/
+
+});
+
+
+
+
+
+/*
+
+ve vyklapovátku (sortable, removeable)
+
+addPanel(ajax_url nebo div_id?)
+
+url=
+#q=from:Praha 6 to:Chrudim
+&q=line:50.30,14.23;50.4,16.3
+&q=way:123456 relation:55678
+&qx=http://www.openstreetmap.cz/upload/1009/trasa-kolo.gpx
+&ll=50.3,14.23,12
+&m=OTM;hills;contours;
+
+
+?q=Ke Džbánu 8
+&q=50° 6.135 14° 26.467
+
+-> pří více q ukázat přehled panelů a zazoomovat na vše!!
+
+
+*/
+
 
 
 //-->
@@ -94,39 +217,68 @@ var map_init = function(){
 		<h1>OpenStreetMap.cz</h1>
 		<p>non-public beta</p>
 	</div>
-	
-	<div id="userinput">
-		<form action="#" method="get">
-		<div><input type="text" name="q" class="text"><input type="submit" value="Hledej" class="button"></div>
-		</form>
-		
-		<form action="#" method="get">
-		<div><input type="text" name="q" class="text"><input type="submit" value="Hledej" class="button"></div>
-		</form>
-		
-		<p><a href="">plánování trasy</a> | <a href="">geo upload</a></p>
-	
-	</div>
-	
-	
+
 	<div id="userpanel">
 		<p><a href="">login with OpenStreetMap.org</a>
 	</div>
-</div>
+
+	<div id="userinput">
+		<div id="userinput-query">
+			<form action="#" method="get">
+			<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
+			</form>
+			<div id="userinput-help">
+				souřadnice v libovolném formátu<br>
+				url s gpx/kml/georss<br>
+				node:1235677 way:61571,762317 relation:1656,122<br>
+				nominatim název<br>
+				bounding box
+			</div>
+			<p><a href="#" onclick="$('#userinput-query').hide();$('#userinput-route').show();return false;">plánování trasy</a>
+			 | <a href="#" onclick="$('#userinput-query').hide();$('#userinput-upload').show();return false;">geo upload</a></p>
+		</div>
+	
+		<div id="userinput-route" class="hidden">
+			<form action="#" method="get">
+			<div
+			><input type="text" name="from" class="textfrom"
+			><input type="text" name="to" class="textto"><input type="submit" value="Hledat trasu" class="button"></div>
+			</form>
+			<p><a href="#" onclick="$('#userinput-route').hide();$('#userinput-query').show();return false;">vyhledávací pole</a></p>
+		</div>	
+	
+		<div id="userinput-upload" class="hidden">
+			<form action="#" method="get">
+			<div><input type="file" name="file" class="file"
+			><input type="submit" value="Zobrazit" class="button"></div>
+			</form>
+			<p><a href="#" onclick="$('#userinput-upload').hide();$('#userinput-query').show();return false;">vyhledávací pole</a></p>
+		</div>	
+	</div>	
+
+</div> <!-- /header -->
+
+
 
 <div id="maintop">
 	<div class="leftpanel">
-	Vítejte    _
+	<select id="tab_chooser" style='width: 99%;'>
+   <option value="">Vítejte</option>
+   <option value="">Upload</option>
+   <option value="">Hledání: Praha 6</option>
+ </select>
 	</div>
 	<div class="rightpanel">
-	mapa
+		<a href="#" id="rightpanel_toggle" title="zmenšit/zvětšit panel map">&laquo; mapa</a>
 	</div>
 	<div class="middlepanel">
-	<a href="#">tisk</a> &#149;
-	<a href="#">export</a> &#149; 
-	<a href="#">permalink</a> &#149;
-	
-	<a href="#">překryvné vrstvy</a>
+		<a href="#" id="leftpanel_toggle" title="vysunout/zasunout levý panel">&laquo;</a>
+		<div class="aright">
+			<a href="#">tisk</a> &#149;
+			<a href="#">export</a> &#149; 
+			<a href="#">permalink</a> &#149;
+			<a href="#">překryvné vrstvy</a>
+		</div>
 	</div>	
 </div><!-- /maintop -->
 
@@ -140,7 +292,7 @@ var map_init = function(){
 		</ul>
 		
 		<div id="footer">
-		(c) česká komunita OpenStreetMap 2010, hosting walley, <a href="">feedback</a>
+		(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
 		</div>
 	</div>
 	
@@ -150,7 +302,28 @@ var map_init = function(){
 	3
 	</div>
 	
-	<div class="middlepanel"><div id="map"><a href="#" onclick="map_init(); $(this).hide()">map_init()</a></div></div>	
+	<div class="middlepanel"><div id="map">
+	<div>
+	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
+	
+	
+	<ul>
+	<li>přepínací vyhledávací pole
+	<li>- udělat ho na 100% a tak aby se zvětšovalo
+	<li><a href="http://jqueryui.com/demos/autocomplete/#multiple">auto-complete</a> / nápovědník
+	<li>záložkový systém do levého panelu
+	<li>- roletové vybírátko
+	<li>udělat klikátka na zasunutí obou panelů
+	<li>udělat roletkou překryvné vrstvy
+	</ul>
+
+<ul>
+<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
+</ul>	
+	
+	
+	</div>
+	</div></div>	
 </div><!-- /maincontent -->
 
 </body>

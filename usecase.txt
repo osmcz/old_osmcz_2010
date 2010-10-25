@@ -1,0 +1,62 @@
+
+<panel>
+.construct()
+.setTitle()						//změní i v panelu
+.getTitle()
+.setUrl()
+.getUrl()
+.parseUrl()
+.constructUrl()
+.showInSumm
+
+.setId()
+.getId()
+
+.addHtml()
+.addFeatures() //wpts, nodes, ways+, relations++,
+
+.toggleDataLayer(b)
+
+
+---------------
+vždy může být více instancí (tj. jiná data, 
+<Routing> - blankForm nemá Url, jinak ano
+<OsmData> - (node-ways/bbox)
+<Coords>
+<Address>
+<BBox>
+<MapUrl> - též Upload
+<TextPanel> - pouze html data; přechodem se změní Url,Html,Title - Id zůstane,
+						- jediná instance, která se mění?
+						- mít tam i úvod?? ten by měl být instantně
+<Export> - 
+<Summary> - zůstává Id,Title; mění se Html, má kompozitní Url
+-- trvale existuje <div> panel, má i svůj objekt?
+-- - kam ho ukládat?
+- nějaké pole kde jsou všechny "menu" panely (sortable)
+- další pole na ty nemenové?
+ -> stačí rozlišovat
+- co když existuje předem <div>?
+
+mít některé panely nepersistentní:
+- summary
+- upload tab
+ 
+
+---------------
+<panels>
+.addNew(<panel>)  //na začátek pole
+.remove(<panel>)  //delete + zobraz úvod
+.set/getActive()  //return + change
+.getAll()					//[active] + pole
+
+
+
+
+
+<Routing>.constuct(data) - setTitle, [if]setUrl, createForm, [if]showRoute(data)[else]addHtml(help)
+
+
+
+
+
