@@ -1,21 +1,48 @@
+ve vyklapovátku (sortable, removeable)
 
-<panel>
-.construct()
-.setTitle()						//změní i v panelu
-.getTitle()
-.setUrl()
-.getUrl()
-.parseUrl()
-.constructUrl()
-.showInSumm
+addPanel(ajax_url nebo div_id?)
 
-.setId()
-.getId()
+url=
+#q=from:Praha 6 to:Chrudim
+&q=line:50.30,14.23;50.4,16.3
+&q=way:123456 relation:55678
+&qx=http://www.openstreetmap.cz/upload/1009/trasa-kolo.gpx
+&ll=50.3,14.23,12
+&m=OTM;hills;contours;
 
-.addHtml()
-.addFeatures() //wpts, nodes, ways+, relations++,
 
-.toggleDataLayer(b)
+?q=Ke Džbánu 8
+&q=50° 6.135 14° 26.467
+
+-> pří více q ukázat přehled panelů a zazoomovat na vše!!
+
+
+
+var Panel = function(){}
+setTitle()
+getTitle()
+setUrl()
+getUrl()
+parseUrl()
+constructUrl()
+showInSumm
+
+setId()
+getId()
+
+addHtml()
+addFeatures()
+
+toggleDataLayer()
+
+
+Routing.prototype = new Panel();
+Routing = function(){
+	Panel.apply(this, arguments);
+}
+
+Routing.prototype.createForm()
+Routing.prototype.findRoute()
 
 
 ---------------
@@ -45,10 +72,7 @@ mít některé panely nepersistentní:
 
 ---------------
 <panels>
-.addNew(<panel>)  //na začátek pole
-.remove(<panel>)  //delete + zobraz úvod
-.set/getActive()  //return + change
-.getAll()					//[active] + pole
+
 
 
 

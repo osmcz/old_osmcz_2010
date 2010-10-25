@@ -5,216 +5,27 @@
 <title>OpenStreetMap.cz</title>
 <link rel="stylesheet" href="etc/style.css" type="text/css">
 
+<!-- 
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 <script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
-<!-- 
 
 <script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
 <script src="http://github.com/cowboy/jquery-hashchange/raw/v1.3/jquery.ba-hashchange.min.js" type="text/javascript"></script>
  -->
-
-
-
-<script type="text/javascript">
-<!--
-
-//osm prašný most, cestička bohdalec
-
-var map_init = function(){
-	var map = new OpenLayers.Map('map');
-	
-	map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
-	map.addControl(new OpenLayers.Control.LayerSwitcher());
-	map.setCenter( new OpenLayers.LonLat(14.3, 50.1).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 
-		14);
-}
-
-
-$(function(){
-
-	$('#leftpanel_toggle').toggle(
-		function (){
-			$('#leftpanel_toggle').html('&raquo;');
-			$('.leftpanel').hide();
-			$('.middlepanel').css('margin-left', 0);
-		},
-		function (){
-			$('#leftpanel_toggle').html('&laquo;');
-			$('.leftpanel').show();
-			$('.middlepanel').css('margin-left', 271);
-		}
-	);
-
-	$('#rightpanel_toggle').toggle(
-		function (){
-			$('#rightpanel_toggle').html('&raquo; mapy');
-			$('.rightpanel').css('width', '200px');
-			$('.middlepanel').css('margin-right', 200);
-		},
-		function (){
-			$('#rightpanel_toggle').html('&laquo; mapy');
-			$('.rightpanel').css('width', '60px');
-			$('.middlepanel').css('margin-right', 60);
-		}
-	);
-
-
-
-
-
-	//autocomplete nominatim
-	var cache = {},
-			lastXhr;
-		$( "#search-autocomplete" ).autocomplete({
-			minLength: 2,
-			source: function( request, response ) {
-				/*var term = request.term;
-				if ( term in cache ) {
-					response( cache[ term ] );
-					return;
-				}
-*/
-
-
-
-			$.ajax({
-					url: "http://nominatim.openstreetmap.org/search",
-					dataType: "jsonp",
-					jsonp: 'json_callback',
-					data: {
-						q: request.term,
-						format: "json",
-						limit: 12
-					},
-					success: function( data ) {
-						response( $.map( data, function( item ) {
-							return {
-								label: item.display_name,
-								value: item.osm_id
-							}
-						}));
-					}
-				});
-
-
-
-				/*lastXhr = $.getJSON( "?", request, function( data, status, xhr ) {
-					cache[ term ] = data;
-					if ( xhr === lastXhr ) {
-						response( data );
-					}
-				});*/
-			}
-		});
-
-
-
-
-/*
-
-[{
-    "place_id": "38656",
-    "licence": "Data Copyright OpenStreetMap Contributors, Some Rights Reserved. CC-BY-SA 2.0.",
-    "osm_type": "node",
-    "osm_id": "26270934",
-    "boundingbox": ["49.9276559", "50.2476559", "14.2612127", "14.5812127"],
-    "lat": "50.0876559",
-    "lon": "14.4212127",
-    "display_name": "Praha, Hlavní město Praha, 19, CZ01, Česká republika, Europe",
-    "class": "place",
-    "type": "city",
-    "icon": "http://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png"
-},
-
-
-		var projects = [
-			{
-				value: "jquery",
-				label: "jQuery",
-				desc: "the write less, do more, JavaScript library",
-				icon: "jquery_32x32.png"
-			},
-			{
-				value: "jquery-ui",
-				label: "jQuery UI",
-				desc: "the official user interface library for jQuery",
-				icon: "jqueryui_32x32.png"
-			},
-			{
-				value: "sizzlejs",
-				label: "Sizzle JS",
-				desc: "a pure-JavaScript CSS selector engine",
-				icon: "sizzlejs_32x32.png"
-			}
-		];
-
-		$( "#project" ).autocomplete({
-			minLength: 0,
-			source: projects,
-			focus: function( event, ui ) {
-				$( "#project" ).val( ui.item.label );
-				return false;
-			},
-			select: function( event, ui ) {
-				$( "#project" ).val( ui.item.label );
-				$( "#project-id" ).val( ui.item.value );
-				$( "#project-description" ).html( ui.item.desc );
-				$( "#project-icon" ).attr( "src", "images/" + ui.item.icon );
-
-				return false;
-			}
-		})
-		.data( "autocomplete" )._renderItem = function( ul, item ) {
-			return $( "<li></li>" )
-				.data( "item.autocomplete", item )
-				.append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
-				.appendTo( ul );
-		};
-
-*/
-
-});
-
-
-
-
-
-/*
-
-ve vyklapovátku (sortable, removeable)
-
-addPanel(ajax_url nebo div_id?)
-
-url=
-#q=from:Praha 6 to:Chrudim
-&q=line:50.30,14.23;50.4,16.3
-&q=way:123456 relation:55678
-&qx=http://www.openstreetmap.cz/upload/1009/trasa-kolo.gpx
-&ll=50.3,14.23,12
-&m=OTM;hills;contours;
-
-
-?q=Ke Džbánu 8
-&q=50° 6.135 14° 26.467
-
--> pří více q ukázat přehled panelů a zazoomovat na vše!!
-
-
-*/
-
-
-
-//-->
-</script>
+<link href="lib/ui-lightness/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css"/>
+<script src="lib/jquery-1.4.3.js" type="text/javascript"></script>
+<script src="lib/jquery-ui-1.8.5.custom.min.js" type="text/javascript"></script>
+<script src="lib/ol/OpenLayers.js" type="text/javascript"></script>
+<script src="etc/script.js" type="text/javascript"></script>
 </head>
 <body>
 
 <div id="header">
 	<div id="logo">
-		<h1>OpenStreetMap.cz</h1>
+		<h1><a href="#" onclick='Panels.statics.home.activate()'>OpenStreetMap.cz</a></h1>
 		<p>non-public beta</p>
 	</div>
 
@@ -223,50 +34,26 @@ url=
 	</div>
 
 	<div id="userinput">
-		<div id="userinput-query">
-			<form action="#" method="get">
-			<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
-			</form>
-			<div id="userinput-help">
-				souřadnice v libovolném formátu<br>
-				url s gpx/kml/georss<br>
-				node:1235677 way:61571,762317 relation:1656,122<br>
-				nominatim název<br>
-				bounding box
-			</div>
-			<p><a href="#" onclick="$('#userinput-query').hide();$('#userinput-route').show();return false;">plánování trasy</a>
-			 | <a href="#" onclick="$('#userinput-query').hide();$('#userinput-upload').show();return false;">geo upload</a></p>
+		<form action="#" method="get" onsubmit="handleQuery(); return false;">
+		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
+		</form>
+		<div id="userinput-help">
+			souřadnice v libovolném formátu<br>
+			url s gpx/kml/georss<br>
+			node:1235677 way:61571,762317 relation:1656,122<br>
+			nominatim název<br>
+			bounding box
 		</div>
-	
-		<div id="userinput-route" class="hidden">
-			<form action="#" method="get">
-			<div
-			><input type="text" name="from" class="textfrom"
-			><input type="text" name="to" class="textto"><input type="submit" value="Hledat trasu" class="button"></div>
-			</form>
-			<p><a href="#" onclick="$('#userinput-route').hide();$('#userinput-query').show();return false;">vyhledávací pole</a></p>
-		</div>	
-	
-		<div id="userinput-upload" class="hidden">
-			<form action="#" method="get">
-			<div><input type="file" name="file" class="file"
-			><input type="submit" value="Zobrazit" class="button"></div>
-			</form>
-			<p><a href="#" onclick="$('#userinput-upload').hide();$('#userinput-query').show();return false;">vyhledávací pole</a></p>
-		</div>	
+		<p><a href="#" onclick="xxx();return false;">plánování trasy</a>
+		 | <a href="#" onclick="return false;">geo upload</a></p>
 	</div>	
-
 </div> <!-- /header -->
 
 
 
 <div id="maintop">
 	<div class="leftpanel">
-	<select id="tab_chooser" style='width: 99%;'>
-   <option value="">Vítejte</option>
-   <option value="">Upload</option>
-   <option value="">Hledání: Praha 6</option>
- </select>
+		<div id='tabchooser' onclick='Panels.statics.summary.activate()'>Vítejte</div>
 	</div>
 	<div class="rightpanel">
 		<a href="#" id="rightpanel_toggle" title="zmenšit/zvětšit panel map">&laquo; mapa</a>
@@ -283,43 +70,44 @@ url=
 </div><!-- /maintop -->
 
 <div id="maincontent">
-	<div class="leftpanel">
-		<p>Blabla
-		<ul>
-		 <li><a href="">poradna</a></li>
-		 <li><a href="">využití dat</a></li>
-		 <li><a href="">jak přispět</a></li>
-		</ul>
-		
-		<div id="footer">
-		(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
+	<div class="leftpanel" id='js-panelsContainer'>
+		<div id='home' title='Vítejte' class='panel'>
+			<p>Blabla
+			<ul>
+			 <li><a href="">poradna</a></li>
+			 <li><a href="">využití dat</a></li>
+			 <li><a href="">jak přispět</a></li>
+			</ul>
+			<div class="footer">
+			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
+			</div>
 		</div>
+		<div id='summary' title='Přehled panelů' class='panel hidden'>
+			Sumáři
+		</div>
+		<!--
+			this <div id='someid' title='Some Title' class='panel hidden'></div>
+			makes following statement true: Panels.statics.someid.getTitle() == 'Some Title'
+		-->
 	</div>
 	
 	<div class="rightpanel">
-	1<br>
-	2<br>
-	3
+	OTM<br>
+	OSM<br>
+	OAM
 	</div>
 	
 	<div class="middlepanel"><div id="map">
 	<div>
 	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
-	
-	
+		
 	<ul>
-	<li>přepínací vyhledávací pole
-	<li>- udělat ho na 100% a tak aby se zvětšovalo
-	<li><a href="http://jqueryui.com/demos/autocomplete/#multiple">auto-complete</a> / nápovědník
 	<li>záložkový systém do levého panelu
-	<li>- roletové vybírátko
-	<li>udělat klikátka na zasunutí obou panelů
 	<li>udělat roletkou překryvné vrstvy
 	</ul>
-
-<ul>
-<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
-</ul>	
+	<ul>
+	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
+	</ul>	
 	
 	
 	</div>

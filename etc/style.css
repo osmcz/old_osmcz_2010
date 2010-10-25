@@ -48,6 +48,8 @@ p {margin: 0;}
 	margin: 0;
 	font-size: 160%;
 }
+#logo h1 a {text-decoration: none; color:#000;}
+#logo h1 a:hover {text-decoration: none; color:#8a8;}
 #logo p {
 	float: left;
 	position: relative;
@@ -58,9 +60,9 @@ p {margin: 0;}
 
 
 #userinput {
-	xfloat: left;
+	xfloat: left; /*zbytecne skace mimo*/
 	margin-left: 300px;
-	xwidth: 400px;
+	xwidth: 400px; 
 	height: 60px;
 }
 #userinput form {
@@ -183,7 +185,7 @@ p {margin: 0;}
 
 
 
-#footer {
+.footer {
 	position: absolute;
 	bottom: 0;
 	width: 270px;
