@@ -138,15 +138,19 @@ p {margin: 0;}
 	float: left;
 	width: 270px;
 	height: 100%;
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 	
-	border-right: 1px #f5f5f5 solid;
+	border-right: 1px #90d55d solid;
 }
 .middlepanel {
 	height: 100%;
+	/*webkit issue for #maintop .middlepanel*/
 	margin-left: 271px;
 	margin-right: 61px;
 
-	border-right: 1px #f5f5f5 solid;
+	border-right: 1px #90d55d solid;
 }
 .rightpanel {
 	float: right;
@@ -159,7 +163,7 @@ p {margin: 0;}
 
 #maintop .leftpanel, #maintop .middlepanel, #maintop .rightpanel {
 	border-top: 1px #f5f5f5 solid;
-	background: #F3FFE5;
+	background: #A5DD77;/*#90d55d;*/
 	height: 20px;
 	line-height: 20px;
 	overflow:hidden;
@@ -184,6 +188,52 @@ p {margin: 0;}
 
 
 
+#tabchooser {
+	display: block;
+	width: 100%;
+	padding: 0 19px;
+	color: #000;
+	text-decoration: none;
+	background: url(dropdown.png) no-repeat left top;
+}
+#tabchooser.top_summary {background: url(dropdown_x.png) no-repeat left top;}
+#tabchooser:hover {background-position: left bottom;}
+
+#summary .item {
+	height: 2em;
+	line-height: 2em;
+	clear: both;
+	border-bottom: 1px #eee solid;
+	position: relative; 
+	overflow: hidden;
+}
+#summary .item a {
+	display: block;
+	width: 100%;
+}
+#summary .item span	 {
+	display: block;
+	position: absolute;
+	right: 0;
+	padding-right: 2px;
+	background: #fff;
+}
+#summary .item span a {
+	display: inline;
+	width: auto;
+	line-height: 2em;
+	text-decoration:none;
+	color: #000;
+	font-size: 80%;
+	padding: 3px;
+}
+#summary .item span a:hover {background: red; color:#fff;}
+#summary .item input {
+	position:relative;
+	top:2px;
+}
+
+.panel {padding: 0.2em;}
 
 .footer {
 	position: absolute;
@@ -195,5 +245,6 @@ p {margin: 0;}
 	overflow: hidden;
 	text-align: center;
 }
+.footer a {color: gray;}
 
 

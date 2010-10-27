@@ -53,7 +53,7 @@
 
 <div id="maintop">
 	<div class="leftpanel">
-		<div id='tabchooser' onclick='Panels.statics.summary.activate()'>Vítejte</div>
+		<a href="#summary" id='tabchooser' onclick='Panels.statics.summary.activate();return false'>Vítejte</a>
 	</div>
 	<div class="rightpanel">
 		<a href="#" id="rightpanel_toggle" title="zmenšit/zvětšit panel map">&laquo; mapa</a>
@@ -71,7 +71,7 @@
 
 <div id="maincontent">
 	<div class="leftpanel" id='js-panelsContainer'>
-		<div id='home' title='Vítejte' class='panel'>
+		<div id='home' title='Vítejte' class='panel hidden'>
 			<p>Blabla
 			<ul>
 			 <li><a href="">poradna</a></li>
@@ -82,8 +82,17 @@
 			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
 			</div>
 		</div>
-		<div id='summary' title='Přehled panelů' class='panel hidden'>
-			Sumáři
+		<div id='summary' title='Přehled panelů' class='panel'>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte asdf asdg asgsad fasdf asdf asf sdfa sdf</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
+			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
 		</div>
 		<!--
 			this <div id='someid' title='Some Title' class='panel hidden'></div>
@@ -102,7 +111,9 @@
 	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
 		
 	<ul>
-	<li>záložkový systém do levého panelu
+	<li>1)přidávat do summary (kdy?)
+	<li>2)změna hashe
+	<li>3)možná jenom panely do DOMu?
 	<li>udělat roletkou překryvné vrstvy
 	</ul>
 	<ul>

@@ -67,6 +67,9 @@ $(function(){
 	});
 
 
+	$("#summary").sortable();
+	$("#summary").disableSelection();
+
 
 });
 
@@ -103,7 +106,7 @@ var Panels = { //static
 	},
 	remove: function(p){
 		//zobraz úvod
-		Panels.setActive(Panels.statics['uvod']);
+		Panels.statics['home'].activate();
 		//delete from this.summary.DOM
 		//delete from this.panels
 	},
@@ -126,12 +129,7 @@ $(Panels.initStaticPanels);
 
 //--------------------------------- Panel ----------------------------------
 var Panel = function(id){
-	if(!document.getElementById(id)){ //non-existent element
-		id = 'pnl'+Math.round(Math.random()*100000); 
-		$('#js-panelsContainer').append('<div id="'+id+'">Content not ready ('+id+')</p>'); //todo:first hide!!
-		$('#'+id).hide();
-	}
-	this.htmlId = id;
+	this.setId(id);
 };
 Panel.prototype = {
 	title: "",
@@ -148,15 +146,33 @@ Panel.prototype = {
 	
 	showInSumm: false,
 	
-	setId: function (id){this.htmlId = id;},
-	getId: function (){this.htmlId;},
+	setId: function (id){
+		if(!document.getElementById(id)){ //non-existent panel, create new one
+			id = 'pnl'+Math.round(Math.random()*100000); 
+			$('#js-panelsContainer').append('<div id="'+id+'" class="panel hidden">Content not ready ('+id+')</p>');
+			$('#'+id).hide();
+		}
+		this.htmlId = id;
+	},
+	getId: function (){return this.htmlId;},
+	
+	//** show/hide this panel, toggle active flag
 	hide: function(){$('#'+this.htmlId).hide(); this.active = false;},
 	show: function(){$('#'+this.htmlId).show(); this.active = true;},
+	
+	//** activate this panel - hide previous, show this and set "active" flags
 	activate: function(){
+		if(this.htmlId == 'summary'){
+			if(Panels.active == this)
+				return this.prevPanel.activate();
+			else 
+				this.prevPanel = Panels.active;
+		}
+	
 		Panels.active.hide()
 		Panels.active = this;
 		this.show();
-		$('#tabchooser').text(this.getTitle());
+		$('#tabchooser').text(this.getTitle()).removeClass().addClass('top_'+this.htmlId);
 	},
 	
 	addHtml: function (){},
@@ -192,6 +208,7 @@ function xxx(data){
 	if(data){
 		Panels.addNew(r);
 		r.setTitle("Trasa: "+data.from+" -> "+data.to);
+		r.remove/addToSummary()
 		r.setQuery(data.query);
 		r.findRoute();
 	}
