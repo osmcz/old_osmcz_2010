@@ -94,48 +94,51 @@ $(function(){
 
 
 
-var Panels = { //static
-	panels: [],
-	active: false,
-	statics: {},
+var OSMCZ = { //static
+	activePanel: false,
+	panels: {}, //assoc by htmlId
 	
-	addNew: function(p){
-		//přidat do DICT: this.panels[panel.id]=panel;
-		Panels.panels[p.id] = p;
-		//přidat na začátek divu summary
-	},
-	remove: function(p){
-		//zobraz úvod
-		Panels.statics['home'].activate();
-		//delete from this.summary.DOM
-		//delete from this.panels
-	},
-	getAll: function(){					//[active] + pole
-	},
+	addPanel: function(p){OSMCZ.panels[p.htmlId] = p},
+	
 	initStaticPanels: function(){ //add from initial DOM
 		$('#js-panelsContainer').children().each(function(){
 			id = $(this).attr('id');
 			p = new Panel(id);
-			Panels.statics[id] = p;
-			
-			p.setTitle($(this).attr('title'));
-			$(this).removeAttr('title');
+			p.setTitle( $(this).attr('title') );
+			            $(this).removeAttr('title');
 		});
-		Panels.active = Panels.statics['home'];
+		
+		new Summary();
+		
+		OSMCZ.panels.summary.add(OSMCZ.panels['home']);
+		OSMCZ.activePanel = OSMCZ.panels['home'];
 	}
 }
-$(Panels.initStaticPanels);
+$(OSMCZ.initStaticPanels);
+
 
 
 //--------------------------------- Panel ----------------------------------
 var Panel = function(id){
-	this.setId(id);
-};
+	//initHtml
+	if(!id)
+		id = 'pnl'+Math.round(Math.random()*100000); //random name?
+		
+	if(!document.getElementById(id)){ //create new html panel?
+		$('#js-panelsContainer').append('<div id="'+id+'" class="panel hidden"></div>');
+	}
+	
+	this.htmlId = id;
+	
+	//add to main register
+	OSMCZ.addPanel(this);
+}
 Panel.prototype = {
 	title: "",
 	url: "",
 	htmlId: false,
 	active: false,
+	Panel: Panel, //constructor
 
 	setTitle: function (str){this.title = str; if(this.active) $('#tabchooser').text(str)},
 	getTitle: function (){return this.title;},
@@ -145,16 +148,7 @@ Panel.prototype = {
 	constructQuery: function (){},
 	
 	showInSumm: false,
-	
-	setId: function (id){
-		if(!document.getElementById(id)){ //non-existent panel, create new one
-			id = 'pnl'+Math.round(Math.random()*100000); 
-			$('#js-panelsContainer').append('<div id="'+id+'" class="panel hidden">Content not ready ('+id+')</p>');
-			$('#'+id).hide();
-		}
-		this.htmlId = id;
-	},
-	getId: function (){return this.htmlId;},
+
 	
 	//** show/hide this panel, toggle active flag
 	hide: function(){$('#'+this.htmlId).hide(); this.active = false;},
@@ -162,40 +156,59 @@ Panel.prototype = {
 	
 	//** activate this panel - hide previous, show this and set "active" flags
 	activate: function(){
-		if(this.htmlId == 'summary'){
-			if(Panels.active == this)
-				return this.prevPanel.activate();
-			else 
-				this.prevPanel = Panels.active;
-		}
-	
-		Panels.active.hide()
-		Panels.active = this;
+		OSMCZ.activePanel.hide()
+		OSMCZ.activePanel = this;
 		this.show();
-		$('#tabchooser').text(this.getTitle()).removeClass().addClass('top_'+this.htmlId);
+		$('#tabchooser').text(this.getTitle()).removeClass();
 	},
 	
 	addHtml: function (){},
 	addFeatures: function (){},
 	
-	toggleDataLayer: function (){},	
+	toggleDataLayer: function (){alert(this.htmlId+' data toggled');},	
 }
 
 
-//--------------------------------- ROUTING : Panel ------------------------
-var Routing = function(data){
-	this.parentClass = Panel;
-	this.parentClass();
-	this.data=data;
+//--------------------------------- SUMMARY : Panel ------------------------
+var Summary = function(){
+	this.Panel('summary');
+	this.setTitle("Přehled panelů");
+	
+	$("#summary .item a").live("click", function(event){
+		alert($(this).parent().attr('id'));
+		return false;
+	});
+	
+	$("#summary .item input").live("click", function(event){
+		id = $(this).parent().parent().attr('id');
+		OSMCZ.panels[id].toggleDataLayer();
+		return false;
+	});
+
 }
-Routing.prototype = new Panel(); 
-Routing.prototype.createForm = function (){}
-Routing.prototype.findRoute = function (){a}
-Routing.parseQuery = function (query){ //static
-		arr = query.split('>');
-		if(!arr[1]) return false;
-		return {from: arr[0], to: arr[1]};
+Summary.prototype = new Panel();
+Summary.prototype.add = function(p){
+	$('#summary').append('<div class="item" id="item_'+p.htmlId+'"><span><input type="checkbox" name="a"> <a href="#">X</a></span><a href="#'+p.getQuery()+'">'+p.getTitle()+'</a></div>');
 }
+Summary.prototype.activate = function(){
+	if(OSMCZ.activePanel != this){
+		this.prevPanel = OSMCZ.activePanel;
+		OSMCZ.activePanel.hide()
+		OSMCZ.activePanel = this;
+		this.show();
+		$('#tabchooser').text(this.getTitle()).removeClass().addClass('top_'+this.htmlId);
+	}
+	else {
+		this.prevPanel.activate();
+	}
+}
+
+Summary.prototype.remove = function(p){
+	//OSMCZ.panels['home'].activate(); //zobraz úvod
+	OSMCZ.panels[p.htmlId] = false; //delete from this.panels
+	//delete from this.summary.DOM
+}
+
 
 
 /// routingový constructor
@@ -206,7 +219,7 @@ function xxx(data){
 	r.activate();
 	
 	if(data){
-		Panels.addNew(r);
+		OSMCZ.addNew(r);
 		r.setTitle("Trasa: "+data.from+" -> "+data.to);
 		r.remove/addToSummary()
 		r.setQuery(data.query);
@@ -246,4 +259,23 @@ function handleQuery(){
 }
 
 
+
+
+
+
+//--------------------------------- ROUTING : Panel ------------------------
+var Routing = function(data){
+	this.Panel = Panel;
+	this.Panel();
+	this.data=data;
+	OSMCZ.summary.add(this);
+}
+Routing.prototype = new Panel(); 
+Routing.prototype.createForm = function (){}
+Routing.prototype.findRoute = function (){a}
+Routing.parseQuery = function (query){ //static
+		arr = query.split('>');
+		if(!arr[1]) return false;
+		return {from: arr[0], to: arr[1]};
+}
 

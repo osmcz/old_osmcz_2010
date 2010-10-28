@@ -25,7 +25,7 @@
 
 <div id="header">
 	<div id="logo">
-		<h1><a href="#" onclick='Panels.statics.home.activate()'>OpenStreetMap.cz</a></h1>
+		<h1><a href="#" onclick='OSMCZ.panels.home.activate()'>OpenStreetMap.cz</a></h1>
 		<p>non-public beta</p>
 	</div>
 
@@ -53,7 +53,7 @@
 
 <div id="maintop">
 	<div class="leftpanel">
-		<a href="#summary" id='tabchooser' onclick='Panels.statics.summary.activate();return false'>Vítejte</a>
+		<a href="#summary" id='tabchooser' onclick='OSMCZ.panels.summary.activate();return false'>Vítejte</a>
 	</div>
 	<div class="rightpanel">
 		<a href="#" id="rightpanel_toggle" title="zmenšit/zvětšit panel map">&laquo; mapa</a>
@@ -71,7 +71,7 @@
 
 <div id="maincontent">
 	<div class="leftpanel" id='js-panelsContainer'>
-		<div id='home' title='Vítejte' class='panel hidden'>
+		<div id='home' title='Vítejte' class='panel'>
 			<p>Blabla
 			<ul>
 			 <li><a href="">poradna</a></li>
@@ -82,21 +82,11 @@
 			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
 			</div>
 		</div>
-		<div id='summary' title='Přehled panelů' class='panel'>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte asdf asdg asgsad fasdf asdf asf sdfa sdf</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-			<div class="item"><span><input type="checkbox" name="a"> <a href="">X</a></span><a href="#home">Vítejte</a></div>
-		</div>
+		
+		
 		<!--
 			this <div id='someid' title='Some Title' class='panel hidden'></div>
-			makes following statement true: Panels.statics.someid.getTitle() == 'Some Title'
+			makes following statement true: OSMCZ.panels.someid.getTitle() == 'Some Title'
 		-->
 	</div>
 	
