@@ -25,7 +25,7 @@
 
 <div id="header">
 	<div id="logo">
-		<h1><a href="#" onclick='OSMCZ.panels.home.activate()'>OpenStreetMap.cz</a></h1>
+		<h1><a href="#" class='dataLink'>OpenStreetMap.cz</a></h1>
 		<p>non-public beta</p>
 	</div>
 
@@ -44,8 +44,8 @@
 			nominatim název<br>
 			bounding box
 		</div>
-		<p><a href="#" onclick="xxx();return false;">plánování trasy</a>
-		 | <a href="#" onclick="return false;">geo upload</a></p>
+		<p><a href="#routingform" class="staticLink">plánování trasy</a>
+		 | <a href="#upload" class="staticLink">geo upload</a></p>
 	</div>	
 </div> <!-- /header -->
 
@@ -53,7 +53,7 @@
 
 <div id="maintop">
 	<div class="leftpanel">
-		<a href="#summary" id='tabchooser' onclick='OSMCZ.panels.summary.activate();return false'>Vítejte</a>
+		<a href="#summary" id='tabchooser' onclick='OSMCZ.tabchooser();return false'>Vítejte</a>
 	</div>
 	<div class="rightpanel">
 		<a href="#" id="rightpanel_toggle" title="zmenšit/zvětšit panel map">&laquo; mapa</a>

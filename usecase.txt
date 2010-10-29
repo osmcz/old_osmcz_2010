@@ -53,10 +53,15 @@ vždy může být více instancí (tj. jiná data,
 <Address>
 <BBox>
 <MapUrl> - též Upload
+------
+
+<Upload>
+<Home>
 <TextPanel> - pouze html data; přechodem se změní Url,Html,Title - Id zůstane,
 						- jediná instance, která se mění?
 						- mít tam i úvod?? ten by měl být instantně
 <Export> - 
+<Print>
 <Summary> - zůstává Id,Title; mění se Html, má kompozitní Url
 -- trvale existuje <div> panel, má i svůj objekt?
 -- - kam ho ukládat?
