@@ -12,7 +12,6 @@
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
 
-<script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
  -->
 <link href="lib/ui-lightness/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css"/>
 <script src="lib/jquery-1.4.3.js" type="text/javascript"></script>
@@ -20,6 +19,7 @@
 <script src="lib/ol/OpenLayers.js" type="text/javascript"></script>
 <script src="etc/script.js" type="text/javascript"></script>
 <script src="http://github.com/cowboy/jquery-hashchange/raw/v1.3/jquery.ba-hashchange.min.js" type="text/javascript"></script>
+<script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
 
 </head>
 <body>
@@ -35,7 +35,7 @@
 	</div>
 
 	<div id="userinput">
-		<form action="#" method="get" onsubmit="handleQuery(); return false;">
+		<form action="#" method="get" onsubmit="window.location.hash = $('#search-autocomplete').attr('value'); return false;">
 		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
 		</form>
 		<div id="userinput-help">
@@ -85,7 +85,13 @@
 		</div>
 		
 		<div id='routingform' class='hidden panel'>
-		a
+			<form action="#">
+			<table>
+			<tr><td>Odkud: <td><input type='text' id='routingform-from'>
+			<tr><td>Kam: <td><input type='text' id='routingform-from'>
+			</table>
+			<p><input type='submit' value='Najít'>
+			</form>
 		</div>
 		<!--
 			this <div id='someid' title='Some Title' class='panel hidden'></div>
@@ -103,13 +109,25 @@
 	<div>
 	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
 		
+	<ol>
+	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
+	<li>design uploadu, panelů
+	</ol>
 	<ul>
-	<li>1)přidávat do summary (kdy?)
-	<li>2)změna hashe
-	<li>3)možná jenom panely do DOMu?
-	<li>udělat roletkou překryvné vrstvy
-	</ul>
-	<ul>
+	<li>&lt;Routing> &lt;OsmData> 
+	&lt;Coords>
+&lt;Address>
+&lt;BBox>
+&lt;MapUrl> 
+------
+
+&lt;Upload>
+&lt;Home>
+&lt;TextPanel> 
+&lt;Export> 
+&lt;Print>
+&lt;Summary>
+	<li>SUMMARY by mělo v URL mít kompozitní url všech panelů??
 	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
 	</ul>	
 	

@@ -39,7 +39,7 @@ $(function(){
 
 
 
-
+/*
 	//autocomplete nominatim
 	$( "#search-autocomplete" ).autocomplete({
 		minLength: 2,
@@ -64,7 +64,7 @@ $(function(){
 			}); //ajax
 		} //source
 	});
-
+//*/
 
 	$("#summary").sortable();
 	$("#summary").disableSelection();
@@ -121,7 +121,7 @@ var Panel = {
 	
 	/** setTitle(), getTitle()
 	 */	
-	setTitle: function (str){this.title = str;},
+	setTitle: function (str){this.title = str; OSMCZ.setTitle(str);},
 	getTitle: function (){return this.title;},
 
 	/** setData(), getData()
@@ -135,6 +135,11 @@ var Panel = {
 	getQuery: function (){return this.query;},
 	
 	
+	/** html manip
+	 */
+	$: function (){return $(document.getElementById(this.id));},
+	
+		
 	endof:'Panel'
 }
 
@@ -166,11 +171,13 @@ var OSMCZ = {
 	panelsById: {}, 				//assoc by htmlId
 	panelsByQuery: {},
 	statics: {},
-	dataPanels: [], 	
+	dataPanels: [],
+	lastHash: '',
 	
 	/** initialization() of UI
 	 */	
-	init: function(){ 
+	init: function(){
+		// statics
 		OSMCZ.statics.summary = new Summary();
 		OSMCZ.statics.routingform = new RoutingForm();
 		// OSMCZ.statics.upload = new Upload();
@@ -178,31 +185,45 @@ var OSMCZ = {
 		// OSMCZ.statics.print = new Print();
 		// OSMCZ.statics.export = new Export();
 		
-		OSMCZ.dataPanels = [Home, Routing];
-		//Routing,OsmData,Coords,Address,BBox,MapUrl
+		// dynamics
+		OSMCZ.dataPanels = [Home, Routing]; //Routing,OsmData,Coords,Address,BBox,MapUrl
 		
-		OSMCZ.activePanel = new Home();
+		// Home panel
+		OSMCZ.activePanel = p = new Home();
+		OSMCZ.statics.summary.add(p);
+		OSMCZ.panelsById[p.id] = p;
+		OSMCZ.panelsByQuery[p.query] = p;
 		
-		
+		// hash change 
 		$(window).hashchange(function (){
 			var hash = window.location.hash.substr(1);
 			if(OSMCZ.lastHash != hash){
-				OSMCZ.lastHash = hash;
-				OSMCZ.handleQuery(hash);
+				res = OSMCZ.handleQuery(hash);
+				if(res)
+					OSMCZ.lastHash = hash;
 			}
 		});
 	  $(window).hashchange();
-		//$('.osmczlink').live('click', function(e){OSMCZ.handleQuery( $(this).attr('href').substr(1) );});		
+	  
+		$('.osmczlink').live('click', function(e){
+			hash = $(this).attr('href').substr(1);
+			res = OSMCZ.handleQuery(hash);
+			if(res)
+				OSMCZ.lastHash = hash;
+		});		
 	},
 	
 	
-	/** tabchooser() Clicked
+	/** tabchooser() Clicked - dvojklikem se dostat kde jsem byl
 	 */
 	tabchooser: function(){
-		if(OSMCZ.activePanel instanceof StaticPanel)	//funkce křížku
+		if(OSMCZ.activePanel == OSMCZ.statics.summary){ //funkce křížku
 			OSMCZ.lastActivePanel.activate();
-		else 																					//funkce "zobraz Summary"
+		}
+		else{ 																					//funkce "zobraz Summary"
+			OSMCZ.lastActivePanel = OSMCZ.activePanel;
 			OSMCZ.statics.summary.activate();
+		}
 	},
 	
 	
@@ -223,6 +244,7 @@ var OSMCZ = {
 		//load from cache, only dataPanels
 		if(OSMCZ.panelsByQuery[query]){
 			matchedObject = OSMCZ.panelsByQuery[query];
+			matchedObject.activate();
 			return true;
 		}
 
@@ -255,15 +277,12 @@ var OSMCZ = {
 	/** activate(panel) 
 	 */
 	activate: function(p){
-		if(!(OSMCZ.activePanel instanceof StaticPanel)){	//předchozí není static, uložíme
-			OSMCZ.lastActivePanel = OSMCZ.activePanel;
-		}
 		OSMCZ.activePanel.hide();
 		p.show();
 		OSMCZ.activePanel = p;
-		$('#tabchooser').text(p.getTitle())
+		OSMCZ.setTitle(p.getTitle());
 		
-		if(OSMCZ.activePanel instanceof StaticPanel)
+		if(OSMCZ.activePanel == OSMCZ.statics.summary)
 			$('#tabchooser').addClass('x_ico');
 		else
 			$('#tabchooser').removeClass('x_ico');
@@ -273,8 +292,18 @@ var OSMCZ = {
 	/** debug(str)
 	 */	
 	debug: function(str){
-		$('#js-panelsContainer').append('<small>'+str+'</small><br>');
+		$('#map').children(0).append('<small>'+str+'</small><br>');
+		//$('#js-panelsContainer').append('<small>'+str+'</small><br>');
 	},
+	
+
+	/** setTitle(str)  -- max cca 30 letters
+	 */	
+	setTitle: function(str){
+		$('#tabchooser').text(str);
+		//document.title = str + (str ? ' - ':'') + 'OpenStreetMap.cz';
+	},
+	
 	
 	endof: 'OSMCZ'
 }
@@ -319,7 +348,6 @@ Home.parseQuery = function (query){return (query=='');}
 
 //--------------------------------- RoutingForm : StaticPanel ------------------------
 var RoutingForm = function(){
-	//není potřeba: this.Panel();
 	this.setTitle("Plánování trasy");
 	this.setId('routingform');
 }
@@ -328,8 +356,10 @@ RoutingForm.prototype = new StaticPanel();
 
 //--------------------------------- Routing : DataPanel ------------------------
 var Routing = function(){
-	//není potřeba: this.Panel();
-	//OSMCZ.summary.add(this);
+	this.setTitle("Plánování trasy");
+	this.setId();
+	this.$().append($('#routingform').html());
+	
 }
 Routing.prototype = new DataPanel(); 
 Routing.prototype.createForm = function (){}

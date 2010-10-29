@@ -82,7 +82,7 @@ p {margin: 0;}
 	width: 300px;
 	border-right: 0;
 }
-#userinput .textfrom {
+/*#userinput .textfrom {
 	width: 150px;
 	background: url(marker_13.png) no-repeat 3px center;
 	padding-left: 18px;
@@ -93,7 +93,7 @@ p {margin: 0;}
 	background: url(flag_red.png) no-repeat 3px center;
 	padding-left: 20px;
 	border-right: 0;
-}
+}*/
 #userinput .button {background: #fff url(button-bck.png) repeat-x left top;}
 #userinput p {
 	font-size: 85%;
