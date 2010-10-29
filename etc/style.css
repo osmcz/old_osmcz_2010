@@ -196,7 +196,7 @@ p {margin: 0;}
 	text-decoration: none;
 	background: url(dropdown.png) no-repeat left top;
 }
-#tabchooser.top_summary {background: url(dropdown_x.png) no-repeat left top;}
+#tabchooser.x_ico {background: url(dropdown_x.png) no-repeat left top;}
 #tabchooser:hover {background-position: left bottom;}
 
 #summary .item {

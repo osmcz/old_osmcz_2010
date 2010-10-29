@@ -89,18 +89,14 @@ $(function(){
 //--------------------------------- Panel common prototype -------------------
 var Panel = {
 	id: false,
+	data: {},
+	title: "",
 	
 	
 	/** activate THIS panel
 	 */	
 	activate: function(){
-		if(!(OSMCZ.activePanel instanceof StaticPanel)){	//předchozí není static, uložíme
-			OSMCZ.lastActivePanel = OSMCZ.activePanel
-		}
-		OSMCZ.activePanel.hide()
-		this.show();
-		OSMCZ.activePanel = this;
-		$('#tabchooser').text(this.getTitle()).removeClass().addClass('top_'+this.htmlId);
+		OSMCZ.activate(this);
 	},
 	
 	
@@ -126,8 +122,20 @@ var Panel = {
 	/** setTitle(), getTitle()
 	 */	
 	setTitle: function (str){this.title = str;},
-	getTitle: function (){return this.title;}
+	getTitle: function (){return this.title;},
+
+	/** setData(), getData()
+	 */	
+	setData: function (d){this.data = d;},
+	getData: function (){return this.data;},
 	
+	/** setQuery(), getQuery()
+	 */	
+	setQuery: function (q){this.query = q;},
+	getQuery: function (){return this.query;},
+	
+	
+	endof:'Panel'
 }
 
 //--------------------------------- StaticPanel ----------------------------------
@@ -158,23 +166,33 @@ var OSMCZ = {
 	panelsById: {}, 				//assoc by htmlId
 	panelsByQuery: {},
 	statics: {},
-	
+	dataPanels: [], 	
 	
 	/** initialization() of UI
 	 */	
 	init: function(){ 
 		OSMCZ.statics.summary = new Summary();
-		// OSMCZ.statics.routingForm = new RoutingForm();
+		OSMCZ.statics.routingform = new RoutingForm();
 		// OSMCZ.statics.upload = new Upload();
 		// OSMCZ.statics.export = new Export();
 		// OSMCZ.statics.print = new Print();
 		// OSMCZ.statics.export = new Export();
-		$('.staticLink').bind('click', function(e){alert('xasgas'+this.href);OSMCZ.statics[this.href.substr(1)].activate();return false;});
+		
+		OSMCZ.dataPanels = [Home, Routing];
+		//Routing,OsmData,Coords,Address,BBox,MapUrl
+		
+		OSMCZ.activePanel = new Home();
 		
 		
-		OSMCZ.handleQuery(''); 
-		$('.dataLink').live('click', function(e){alert('xasgas'+this.href);OSMCZ.handleQuery(this.href.substr(1));return false;});
-		//window.location.hash.substr(1) .. možnos sloučit na link
+		$(window).hashchange(function (){
+			var hash = window.location.hash.substr(1);
+			if(OSMCZ.lastHash != hash){
+				OSMCZ.lastHash = hash;
+				OSMCZ.handleQuery(hash);
+			}
+		});
+	  $(window).hashchange();
+		//$('.osmczlink').live('click', function(e){OSMCZ.handleQuery( $(this).attr('href').substr(1) );});		
 	},
 	
 	
@@ -189,22 +207,30 @@ var OSMCZ = {
 	
 	
 	/** handleQuery() - simple string
+	 *
+	 * Tries to activate statics[query], or creates data panel which handles parseQuery()
 	 */	
-	dataPanels: [Home, Routing], //Routing,OsmData,Coords,Address,BBox,MapUrl
 	handleQuery: function (query){
+		OSMCZ.debug('handleQuery('+query+')');
 		var matchedObject = false;
 		
-		//load from cache
+		//activate statics
+		if(OSMCZ.statics[query]){
+			OSMCZ.statics[query].activate();
+			return true;
+		}
+		
+		//load from cache, only dataPanels
 		if(OSMCZ.panelsByQuery[query]){
 			matchedObject = OSMCZ.panelsByQuery[query];
-			return;
+			return true;
 		}
 
 		//find module matching the query
 		if(!matchedObject){
 			for (i in OSMCZ.dataPanels){
 				if(data = OSMCZ.dataPanels[i].parseQuery(query)){
-					matchedObject = new OSMCZ.dataPanels[i](); //setTitle, setId
+					matchedObject = new OSMCZ.dataPanels[i](); //does setTitle, setId
 					matchedObject.setData(data);
 					matchedObject.setQuery(query);
 					break;
@@ -218,12 +244,39 @@ var OSMCZ = {
 			OSMCZ.statics.summary.add(p);
 			OSMCZ.panelsById[p.id] = p;
 			OSMCZ.panelsByQuery[p.query] = p;
-			p.activate();
+			OSMCZ.activate(p);
+			return true;
 		}
-		else {
-			alert('Nic nenalezeno');
+		
+		OSMCZ.debug('handleQuery('+query+') == false');
+		return false;
+	},
+	
+	/** activate(panel) 
+	 */
+	activate: function(p){
+		if(!(OSMCZ.activePanel instanceof StaticPanel)){	//předchozí není static, uložíme
+			OSMCZ.lastActivePanel = OSMCZ.activePanel;
 		}
-	}
+		OSMCZ.activePanel.hide();
+		p.show();
+		OSMCZ.activePanel = p;
+		$('#tabchooser').text(p.getTitle())
+		
+		if(OSMCZ.activePanel instanceof StaticPanel)
+			$('#tabchooser').addClass('x_ico');
+		else
+			$('#tabchooser').removeClass('x_ico');
+	},
+	
+	
+	/** debug(str)
+	 */	
+	debug: function(str){
+		$('#js-panelsContainer').append('<small>'+str+'</small><br>');
+	},
+	
+	endof: 'OSMCZ'
 }
 $(OSMCZ.init);
 
@@ -261,25 +314,24 @@ var Home = function(){
 	this.setTitle("Vítejte");
 	this.setId('home');
 }
-Home.prototype = new StaticPanel();
+Home.prototype = new DataPanel();
 Home.parseQuery = function (query){return (query=='');}
 
-//--------------------------------- Routing : DataPanel ------------------------
+//--------------------------------- RoutingForm : StaticPanel ------------------------
 var RoutingForm = function(){
 	//není potřeba: this.Panel();
 	this.setTitle("Plánování trasy");
 	this.setId('routingform');
 }
-Routing.prototype = new StaticPanel();
-Routing.parseQuery = function (query){return (query=='');}
+RoutingForm.prototype = new StaticPanel();
 
 
-//--------------------------------- ROUTING : Panel ------------------------
+//--------------------------------- Routing : DataPanel ------------------------
 var Routing = function(){
 	//není potřeba: this.Panel();
 	//OSMCZ.summary.add(this);
 }
-Routing.prototype = new Panel(); 
+Routing.prototype = new DataPanel(); 
 Routing.prototype.createForm = function (){}
 Routing.prototype.findRoute = function (){}
 Routing.parseQuery = function (query){ //static
@@ -300,7 +352,7 @@ Routing.parseQuery = function (query){ //static
 
 
 
-
+/*
 
 
 
@@ -357,4 +409,4 @@ function xxx(data){
 
 
 
-
+//*/
