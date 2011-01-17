@@ -6,13 +6,13 @@
 <link rel="stylesheet" href="etc/style.css" type="text/css">
 
 <!-- 
-<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+	<script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
+-->
 
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
-
- -->
 <link href="lib/ui-lightness/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css"/>
 <script src="lib/jquery-1.4.3.js" type="text/javascript"></script>
 <script src="lib/jquery-ui-1.8.5.custom.min.js" type="text/javascript"></script>
@@ -74,22 +74,23 @@
 	<div class="leftpanel" id='js-panelsContainer'>
 		
 		<div id='home' class='panel'>
-			<p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Projekt, který nabízí zdarma a bez omezení mapová data podobně jako to Wikipedia dělá s encyklopedií.
+			<p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Z projektu, který nabízí zdarma a bez omezení mapová data podobně jako Wikipedia encyklopedii.
 			<ul>
 			 <li><a href="">poradna</a></li>
 			 <li><a href="">využití dat</a></li>
 			 <li><a href="">jak přispět</a></li>
 			</ul>
 			<div class="footer">
-			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="">feedback</a>
+			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="#feedback" class="osmczlink">feedback</a>
 			</div>
 		</div>
 		
 		<div id='routingform' class='hidden panel'>
-			<form action="#">
+			<form action="?" onsubmit="return OSMCZ.thisPanel(this).submitted()">
+			<input type='hidden' name='form' value='routingform'> 
 			<table>
-			<tr><td>Odkud: <td><input type='text' class='from'>
-			<tr><td>Kam: <td><input type='text' class='to'>
+			<tr><td>Odkud: <td><input type='text' name='from' class='from'>
+			<tr><td>Kam: <td><input type='text' name='to' class='to'>
 			</table>
 			<p><input type='submit' value='Najít'>
 			</form>
@@ -106,6 +107,40 @@
 			<p style='margin-top:3em'><b>Tip:</b> Pokud je soubor na webu,<br> stačí napsat adresu <small>(http://...)</small> do vyhledávacího pole nahoře  
 		</div>
 		
+		<div id='print' class='hidden panel'>
+			aktuální BBox (14.9, 15.2, ...)<br>
+			upravit - nakreslit nový (datalink)<br>
+			<input type='checkbox'> zamknout A4<br>
+			<br>
+			- tisknout mapu tak jak je (72dpi)<br>
+			- zkusit podsamplovat dlaždice (150dpi)<br>
+			- vyexportovat pouze mapovou část - slepit dlaždice (onserver) jako jeden obrázek<br>
+			- vyexportovat pouze mapovou část - PDFko (trvá dlouho)<br>
+			- časem nechat mapnika slepit i s jinou vrstvou (routing,lines,points)??
+		</div>
+
+		<div id='export' class='hidden panel'>
+			aktuální BBox (14.9, 15.2, ...)<br>
+			upravit - nakreslit nový (datalink)<br>
+			<br>
+			- vyexportovat pouze mapovou část - slepit dlaždice (onserver) jako jeden obrázek<br>
+			- vyexportovat pouze mapovou část - PDFko (trvá dlouho)<br>
+			- časem nechat mapnika slepit i s jinou vrstvou (routing,lines,points)??
+		</div>		
+		
+		<div id='permalink' class='hidden panel'>
+			Odkaz je možno kopírovat přímo z adresní řádky, reflektuje pouze aktuálně zobrazený panel.
+			<br><br>
+			Odkaz na celý aktuální stav:<br>
+			<input value="">(shorten)(copy)<br>
+			<br>
+			
+			Odkaz na aktuální stav i se skrytými panely:<br>
+			<input value="">(shorten)(copy)<br>
+			<br>
+		</div>	
+		
+		
 	</div><!-- /js-panelsContainer -->
 	
 	<div class="rightpanel">
@@ -119,6 +154,7 @@
 	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
 		
 	<ol>
+	<li>Nápad pravé vyběrátko map + překryvné vrstvy. Hlavně logiku a rozvržení.
 	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
 	<li>design panelů
 	</ol>
