@@ -72,8 +72,9 @@
 
 <div id="maincontent">
 	<div class="leftpanel" id='js-panelsContainer'>
+		
 		<div id='home' class='panel'>
-			<p>Blabla
+			<p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Projekt, který nabízí zdarma a bez omezení mapová data podobně jako to Wikipedia dělá s encyklopedií.
 			<ul>
 			 <li><a href="">poradna</a></li>
 			 <li><a href="">využití dat</a></li>
@@ -87,17 +88,25 @@
 		<div id='routingform' class='hidden panel'>
 			<form action="#">
 			<table>
-			<tr><td>Odkud: <td><input type='text' id='routingform-from'>
-			<tr><td>Kam: <td><input type='text' id='routingform-from'>
+			<tr><td>Odkud: <td><input type='text' class='from'>
+			<tr><td>Kam: <td><input type='text' class='to'>
 			</table>
 			<p><input type='submit' value='Najít'>
 			</form>
 		</div>
-		<!--
-			this <div id='someid' title='Some Title' class='panel hidden'></div>
-			makes following statement true: OSMCZ.panels.someid.getTitle() == 'Some Title'
-		-->
-	</div>
+
+		<div id='upload' class='hidden panel'>
+			<form action="#">
+			<p>Soubor z počítače:<br> <input type='file' class='file'><br>
+			<small>Soubory: GPX, KML, OSM (max 2MB)</small>
+			<br><input type='submit' value='Nahrát'>
+			</form>
+			
+			<p class='small'>Soubor obsahující body, linie a plochy bude zobrazen na mapě. Též lze zobrazit výškový profil, časy a délky.
+			<p style='margin-top:3em'><b>Tip:</b> Pokud je soubor na webu,<br> stačí napsat adresu <small>(http://...)</small> do vyhledávacího pole nahoře  
+		</div>
+		
+	</div><!-- /js-panelsContainer -->
 	
 	<div class="rightpanel">
 	OTM<br>
@@ -111,7 +120,7 @@
 		
 	<ol>
 	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
-	<li>design uploadu, panelů
+	<li>design panelů
 	</ol>
 	<ul>
 	<li>&lt;Routing> &lt;OsmData> 

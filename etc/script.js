@@ -88,9 +88,10 @@ $(function(){
 
 //--------------------------------- Panel common prototype -------------------
 var Panel = {
-	id: false,
+	id: null,
 	data: {},
 	title: "",
+	query: "",
 	
 	
 	/** activate THIS panel
@@ -102,8 +103,8 @@ var Panel = {
 	
 	/** show/hide this panel, toggle active flag
 	 */	
-	hide: function(){$('#'+this.id).hide()},
-	show: function(){$('#'+this.id).show()},
+	hide: function(){this.$().hide()},
+	show: function(){this.$().show()},
 	
 	
 	/** setId() - init html div
@@ -180,7 +181,7 @@ var OSMCZ = {
 		// statics
 		OSMCZ.statics.summary = new Summary();
 		OSMCZ.statics.routingform = new RoutingForm();
-		// OSMCZ.statics.upload = new Upload();
+		OSMCZ.statics.upload = new Upload();
 		// OSMCZ.statics.export = new Export();
 		// OSMCZ.statics.print = new Print();
 		// OSMCZ.statics.export = new Export();
@@ -352,6 +353,13 @@ var RoutingForm = function(){
 	this.setId('routingform');
 }
 RoutingForm.prototype = new StaticPanel();
+
+//--------------------------------- Upload : StaticPanel ------------------------
+var Upload = function(){
+	this.setTitle("Upload geodat");
+	this.setId('upload');
+}
+Upload.prototype = new StaticPanel();
 
 
 //--------------------------------- Routing : DataPanel ------------------------

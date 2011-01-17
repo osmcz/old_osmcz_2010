@@ -28,6 +28,7 @@ body {
   border-bottom: 1px dashed #aaa;
   cursor: help;
 }
+small, .small {font-size:80%; color:gray}
 
 p {margin: 0;}
 
@@ -196,7 +197,7 @@ p {margin: 0;}
 	text-decoration: none;
 	background: url(dropdown.png) no-repeat left top;
 }
-#tabchooser.x_ico {background: url(dropdown_x.png) no-repeat left top;}
+#tabchooser.x_ico {background: #888 url(dropdown_x.png) no-repeat left top; color:#fff}
 #tabchooser:hover {background-position: left bottom;}
 
 #summary .item {
@@ -233,7 +234,9 @@ p {margin: 0;}
 	top:2px;
 }
 
-.panel {padding: 0.2em;}
+.panel {padding: 0.4em;}
+.panel p {margin-bottom: 0.5em;}
+p.spacer {margin-top: 1em;}
 
 .footer {
 	position: absolute;
