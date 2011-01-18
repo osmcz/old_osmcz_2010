@@ -5,21 +5,16 @@
 <title>OpenStreetMap.cz</title>
 <link rel="stylesheet" href="etc/style.css" type="text/css">
 
-<!-- 
-	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-	<script src="http://openlayers.org/api/OpenLayers.js" type="text/javascript"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-	
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js" type="text/javascript"></script>
--->
-
 <link href="lib/ui-lightness/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css"/>
 <script src="lib/jquery-1.4.3.js" type="text/javascript"></script>
 <script src="lib/jquery-ui-1.8.5.custom.min.js" type="text/javascript"></script>
 <script src="lib/ol/OpenLayers.js" type="text/javascript"></script>
-<script src="etc/script.js" type="text/javascript"></script>
-<script src="http://github.com/cowboy/jquery-hashchange/raw/v1.3/jquery.ba-hashchange.min.js" type="text/javascript"></script>
-<script src="http://plugins.jquery.com/files/jquery.dump.js.txt" type="text/javascript"></script>
+
+<?php
+	$arr = array('script/OSMCZ.js', 'script/Panels.js');
+	foreach(glob('script/*.js') as $f) if(!in_array($f, $arr)) $arr[] = $f;
+	foreach($arr as $f) echo "<script src='$f' type='text/javascript'></script>\n";
+?>
 
 </head>
 <body>
@@ -74,12 +69,38 @@
 	<div class="leftpanel" id='js-panelsContainer'>
 		
 		<div id='home' class='panel'>
-			<p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Z projektu, který nabízí zdarma a bez omezení mapová data podobně jako Wikipedia encyklopedii.
+			<!-- <p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Z projektu, který nabízí zdarma a bez omezení mapová data podobně jako Wikipedia encyklopedii.
 			<ul>
 			 <li><a href="">poradna</a></li>
 			 <li><a href="">využití dat</a></li>
 			 <li><a href="">jak přispět</a></li>
 			</ul>
+			-->
+	<ol>
+	<li>Nápad pravé vyběrátko map + překryvné vrstvy. Hlavně logiku a rozvržení.
+	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
+	<li>design panelů
+	</ol>
+	<ul>
+	<li>&lt;Routing> &lt;OsmData> 
+	&lt;Coords>
+&lt;Address>
+&lt;BBox>
+&lt;MapUrl> 
+------
+
+&lt;Upload>
+&lt;Home>
+&lt;TextPanel> 
+&lt;Export> 
+&lt;Print>
+&lt;Summary>
+	<li>SUMMARY by mělo v URL mít kompozitní url všech panelů??
+	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
+	</ul>	
+	
+	
+			
 			<div class="footer">
 			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="#feedback" class="osmczlink">feedback</a>
 			</div>
@@ -144,41 +165,21 @@
 	</div><!-- /js-panelsContainer -->
 	
 	<div class="rightpanel">
-	OTM<br>
-	OSM<br>
-	OAM
-	</div>
 	
-	<div class="middlepanel"><div id="map">
-	<div>
-	<a href="#" onclick="$(this).parent().hide();map_init();">map_init()</a>
-		
-	<ol>
-	<li>Nápad pravé vyběrátko map + překryvné vrstvy. Hlavně logiku a rozvržení.
-	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
-	<li>design panelů
-	</ol>
-	<ul>
-	<li>&lt;Routing> &lt;OsmData> 
-	&lt;Coords>
-&lt;Address>
-&lt;BBox>
-&lt;MapUrl> 
-------
+	<div class="mapsource">
+	<img src="etc/osm_mag_30.png" width="40" height="40"><br>
+	<small>mapnik</small>
+	</div>
 
-&lt;Upload>
-&lt;Home>
-&lt;TextPanel> 
-&lt;Export> 
-&lt;Print>
-&lt;Summary>
-	<li>SUMMARY by mělo v URL mít kompozitní url všech panelů??
-	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
-	</ul>	
-	
-	
+	<div class="mapsource">
+	<img src="etc/osm_mag_30.png" width="40" height="40"><br>
+	<small>osm,oam,otm</small>
 	</div>
-	</div></div>	
+
+	</div>
+	
+	<div class="middlepanel"><div id="map"></div></div>
+		
 </div><!-- /maincontent -->
 
 </body>
