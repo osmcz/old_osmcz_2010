@@ -12,17 +12,37 @@ var OSMCZ = {
 	/** initialization() of UI
 	 */	
 	init: function(){
+		OSMCZ.init_map();
+		OSMCZ.init_panels();
+		OSMCZ.init_links();
+	},
+	
+	init_map: function(){
+		var map = OSMCZ.map = new OpenLayers.Map('map',{
+			units: 'm',
+			projection: new OpenLayers.Projection("EPSG:900913"), //v metrech pro mercatora
+			displayProjection: new OpenLayers.Projection("EPSG:4326"), //latlon
+			control: [
+				new OpenLayers.Control.LayerSwitcher(),
+				new OpenLayers.Control.MousePosition()
+			]
+		});
+		map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
+		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
+	},
+	
+	init_panels: function(){
 		// statics
 		OSMCZ.statics.summary = new Summary();
 		OSMCZ.statics.routingform = new RoutingForm();
 		OSMCZ.statics.upload = new Upload();
 		OSMCZ.statics.print = new Print();
-		OSMCZ.statics.export = new Export();
+                OSMCZ.statics.exportmap = new ExportMap();
 		OSMCZ.statics.permalink = new Permalink();
 		OSMCZ.statics.feedback = new WebPage('feedback', 'Feedback');
 		
 		// dynamics - shows up in Summary-Panel
-		OSMCZ.dataPanels = [Home, Routing]; //Routing,OsmData,Coords,Address,BBox,MapUrl
+		OSMCZ.dataPanels = [Home, Routing, MapUrl, OsmData]; //Routing,OsmData,Coords,Address,BBox,MapUrl
 		
 		// Home panel
 		OSMCZ.activePanel = p = new Home();
@@ -39,22 +59,67 @@ var OSMCZ = {
 			}
 		});
 	  $(window).hashchange();
-	  
+	},
+	
+	init_links: function(){
+		//poslouchat kliknutí na map-link
 		$('.osmczlink').live('click', function(e){
 			hash = $(this).attr('href').substr(1);
 			OSMCZ.debug('osmczlink clicked');			
 			OSMCZ.handleQuery(hash);
 		});
 		
+		//togglovátko na levý panel
+		$('#leftpanel_toggle').toggle(
+			function (){
+				$('#leftpanel_toggle').html('&raquo;');
+				$('body').addClass('leftpanel_toggled');
+			},
+			function (){
+				$('#leftpanel_toggle').html('&laquo;');
+				$('body').removeClass('leftpanel_toggled');
+			}
+		);
 		
-
-		OSMCZ.map = new OpenLayers.Map('map');
-		
-		OSMCZ.map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
-		OSMCZ.map.addControl(new OpenLayers.Control.LayerSwitcher());
-		OSMCZ.map.setCenter( new OpenLayers.LonLat(14.3, 50.1).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 
-			14);
-
+		//rozšiřovátko na pravý panel
+		$('#rightpanel_toggle').toggle(
+			function (){
+				$('#rightpanel_toggle').html('&raquo; mapy');
+				$('body').addClass('rightpanel_toggled');
+			},
+			function (){
+				$('#rightpanel_toggle').html('&laquo; mapy');
+				$('body').removeClass('rightpanel_toggled');
+			}
+		);
+	
+	
+		/*
+		//autocomplete nominatim
+		$( "#search-autocomplete" ).autocomplete({
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "http://nominatim.openstreetmap.org/search",
+					dataType: "jsonp",
+					jsonp: 'json_callback',
+					data: {
+						q: request.term,
+						format: "json",
+						limit: 12
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								label: item.display_name,
+								value: item.display_name
+							}
+						}));
+					}
+				}); //ajax
+			} //source
+		});
+		//*/
 	},
 	
 	
@@ -69,6 +134,15 @@ var OSMCZ = {
 			OSMCZ.statics.summary.activate();
 		}
 	},
+	
+	
+	/** changeQuery()
+	 */
+	changeQuery: function (query){
+		OSMCZ.lastHash = window.location.hash = query;
+		OSMCZ.handleQuery(query);
+	},
+	 	
 	
 	
 	/** handleQuery() - simple string
@@ -96,6 +170,7 @@ var OSMCZ = {
 		if(!matchedObject){
 			for (i in OSMCZ.dataPanels){
 				if(data = OSMCZ.dataPanels[i].parseQuery(query)){
+					if(data == 'changeQuery')	return true; //changing query - OK
 					matchedObject = new OSMCZ.dataPanels[i](); //does setTitle, setId
 					matchedObject.setQuery(query);
 					matchedObject.setData(data);
@@ -139,7 +214,7 @@ var OSMCZ = {
 	/** debug(str)
 	 */	
 	debug: function(str){
-		$('#map').children(0).append('<small>'+str+'</small><br>');
+		$('body').append('<small>'+str+'</small><br>');
 		//$('#js-panelsContainer').append('<small>'+str+'</small><br>');
 	},
 	
@@ -177,76 +252,5 @@ $(OSMCZ.init);
 
 
 
-
-$(function(){
-
-	//togglovátko na levý panel
-	$('#leftpanel_toggle').toggle(
-		function (){
-			$('#leftpanel_toggle').html('&raquo;');
-			$('.leftpanel').hide();
-			$('.middlepanel').css('margin-left', 0);
-		},
-		function (){
-			$('#leftpanel_toggle').html('&laquo;');
-			$('.leftpanel').show();
-			$('.middlepanel').css('margin-left', 271);
-		}
-	);
-
-	//rozšiřovátko na pravý panel
-	$('#rightpanel_toggle').toggle(
-		function (){
-			$('#rightpanel_toggle').html('&raquo; mapy');
-			$('.rightpanel').css('width', '200px');
-			$('.middlepanel').css('margin-right', 200);
-		},
-		function (){
-			$('#rightpanel_toggle').html('&laquo; mapy');
-			$('.rightpanel').css('width', '60px');
-			$('.middlepanel').css('margin-right', 60);
-		}
-	);
-
-
-
-
-/*
-	//autocomplete nominatim
-	$( "#search-autocomplete" ).autocomplete({
-		minLength: 2,
-		source: function( request, response ) {
-			$.ajax({
-				url: "http://nominatim.openstreetmap.org/search",
-				dataType: "jsonp",
-				jsonp: 'json_callback',
-				data: {
-					q: request.term,
-					format: "json",
-					limit: 12
-				},
-				success: function( data ) {
-					response( $.map( data, function( item ) {
-						return {
-							label: item.display_name,
-							value: item.display_name
-						}
-					}));
-				}
-			}); //ajax
-		} //source
-	});
-//*/
-
-	$("#summary").sortable();
-	$("#summary").disableSelection();
-
-
-});
-
-
-
-
-
-
-
+function toLL(obj){return obj.transform(OSMCZ.map.projection, OSMCZ.map.displayProjection);}
+function fromLL(obj){return obj.transform(OSMCZ.map.displayProjection, OSMCZ.map.projection);}

@@ -30,7 +30,7 @@
 	</div>
 
 	<div id="userinput">
-		<form action="#" method="get" onsubmit="window.location.hash = $('#search-autocomplete').attr('value'); return false;">
+		<form action="#" method="get" onsubmit="OSMCZ.changeQuery($('#search-autocomplete').attr('value')); return false;">
 		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
 		</form>
 		<div id="userinput-help">
@@ -87,17 +87,23 @@
 &lt;Address>
 &lt;BBox>
 &lt;MapUrl> 
-------
-
-&lt;Upload>
-&lt;Home>
-&lt;TextPanel> 
-&lt;Export> 
-&lt;Print>
-&lt;Summary>
-	<li>SUMMARY by mělo v URL mít kompozitní url všech panelů??
 	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
 	</ul>	
+* Mapnik<br>
+* Osmarender<br>
+* Cyclo<br>
+* MTB<br>
+* OTM<br>
+* Piste<br>
+* OPNV<br>
+* Kybl3D<br>
+* tiles (MapSurfer, CM, MQ)<br>
+* GMap/Sat<br>
+* Cenia,Uhul,KM<br>
+
+
+
+
 	
 	
 			
@@ -166,14 +172,14 @@
 	
 	<div class="rightpanel">
 	
-	<div class="mapsource">
-	<img src="etc/osm_mag_30.png" width="40" height="40"><br>
-	<small>mapnik</small>
+	<div class="maplayer">
+	<img src="etc/osm_mag_30.png" width="16" height="16"><br>
+	<small>Mapnik</small>
 	</div>
 
 	<div class="mapsource">
 	<img src="etc/osm_mag_30.png" width="40" height="40"><br>
-	<small>osm,oam,otm</small>
+	<small>Osmarender</small>
 	</div>
 
 	</div>

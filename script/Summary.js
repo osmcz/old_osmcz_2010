@@ -5,6 +5,9 @@ var Summary = function(){
 	this.setTitle("Přehled panelů");
 	this.setId('summary');
 	
+	this.$().sortable();
+	this.$().disableSelection();
+
 	// 	$("#summary .item a").live("click", function(event){
 	// 		alert($(this).parent().attr('id'));
 	// 		return false;

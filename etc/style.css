@@ -149,7 +149,7 @@ p {margin: 0;}
 	height: 100%;
 	/*webkit issue for #maintop .middlepanel*/
 	margin-left: 271px;
-	margin-right: 61px;
+	margin-right: 60px;
 
 	border-right: 1px #90d55d solid;
 }
@@ -161,6 +161,10 @@ p {margin: 0;}
 	overflow-x: hidden;
 	overflow-y: auto;
 }
+.leftpanel_toggled .leftpanel {display:none}
+.leftpanel_toggled .middlepanel {margin-left:0}
+.rightpanel_toggled .rightpanel {width: 200px}
+.rightpanel_toggled .middlepanel {margin-right:200px}
 /* </main> */
 
 
@@ -188,6 +192,10 @@ p {margin: 0;}
 #leftpanel_toggle:hover {
 	font-weight: bold;
 	font-size: 100%;
+}
+#rightpanel_toggle {
+	display: block;
+	width: 99%;
 }
 
 
