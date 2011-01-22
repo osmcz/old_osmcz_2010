@@ -8,6 +8,8 @@ var OSMCZ = {
 	dataPanels: [],
 	lastHash: '',
 	map: null,
+	boxSelectControl: null,
+	
 	
 	/** initialization() of UI
 	 */	
@@ -29,6 +31,24 @@ var OSMCZ = {
 		});
 		map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
 		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
+		OpenLayers.ProxyHost = "./proxy.php?url=";
+		
+		
+		
+		//obelníkové vybírátko  
+		var vectors = new OpenLayers.Layer.Vector();
+    OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(vectors, OpenLayers.Handler.RegularPolygon, { 
+      handlerOptions: {
+        sides: 4,
+        snapAngle: 90,
+        irregular: true,
+        persist: true
+      }
+    });
+    map.addControl(OSMCZ.boxSelectControl);
+    //usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
+
+    
 	},
 	
 	init_panels: function(){
@@ -69,6 +89,12 @@ var OSMCZ = {
 			OSMCZ.handleQuery(hash);
 		});
 		
+		//poslouchat kliknutí na button uvnitř panelu
+		$('.osmczbutton').live('click', function(e){
+			OSMCZ.thisPanel(this).buttonClicked($(this));
+			return false;
+		});
+
 		//togglovátko na levý panel
 		$('#leftpanel_toggle').toggle(
 			function (){
@@ -140,7 +166,7 @@ var OSMCZ = {
 	 */
 	changeQuery: function (query){
 		OSMCZ.lastHash = window.location.hash = query;
-		OSMCZ.handleQuery(query);
+		var queryHandled = OSMCZ.handleQuery(query);
 	},
 	 	
 	
@@ -148,6 +174,7 @@ var OSMCZ = {
 	/** handleQuery() - simple string
 	 *
 	 * Tries to activate statics[query], or creates data panel which handles parseQuery()
+	 * Called onHashChange or to duplicate dataPanel
 	 */	
 	handleQuery: function (query){
 		OSMCZ.debug('called handleQuery('+query+')');
@@ -229,9 +256,9 @@ var OSMCZ = {
 	/** Returns panel object for any children html object
 	 */	
 	thisPanel: function(obj){
-		var id = $(obj).parent('.panel').attr('id');
+		var id = $(obj).parents('.panel').attr('id');
 		if(!id)
-			return alert('Unrecoverable error - thisPanel() called out of panel scope');
+			return alert('Unrecoverable error - thisPanel() called out of panel scope by '+$.dump(obj));
 			
 		var panel = OSMCZ.panelsById[id];
 		if(!panel)

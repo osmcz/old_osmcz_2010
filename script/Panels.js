@@ -81,6 +81,9 @@ var Panel = {
 		}
 	},
 
+	/** Automatically called when .osmczbutton clicked
+	 */	
+	buttonClicked: function(htmlobj){},
 	
 		
 	endof:'Panel'
