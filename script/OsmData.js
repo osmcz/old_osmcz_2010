@@ -10,20 +10,21 @@ var OsmData = function(){
 	
 	
 	var panel = this;
-		//poslouchat kliknutí na button uvnitř panelu
-		this.$().find('.osmczbutton').live('mouseover', function(e){
+	//poslouchat kliknutí na button uvnitř panelu
+	this.$().find('.osmczbutton').live('mouseover', function(e){
+	
+		var feature = panel.layer.features[$(this).attr('data-fid')];
+		if(!feature) return false; //we dont care about showCurrent and enableBoxSelecto 
 		
-	    var feature = panel.layer.features[$(this).attr('data-fid')];
-
-	    for (var i = 0; i < panel.layer.selectedFeatures.length; i++) { //unselect previous
-	      var f = panel.layer.selectedFeatures[i]; 
-	      panel.layer.drawFeature(f, panel.layer.styleMap.createSymbolizer(f, "default"));
-	    }
-
-	    panel.browseSelectControl.select(feature);
-	    //OSMCZ.map.setCenter(feature.geometry.getBounds().getCenterLonLat());
-			return false;
-		});
+		for (var i = 0; i < panel.layer.selectedFeatures.length; i++) { //unselect previous
+			var f = panel.layer.selectedFeatures[i]; 
+			panel.layer.drawFeature(f, panel.layer.styleMap.createSymbolizer(f, "default"));
+		}
+		
+		panel.browseSelectControl.select(feature);
+		//OSMCZ.map.setCenter(feature.geometry.getBounds().getCenterLonLat());
+		return false;
+	});
 }
 OsmData.prototype = new DataPanel();
 OsmData.prototype.layer = null;  ///always store .data as LL (epsg:4326)
@@ -34,6 +35,7 @@ OsmData.prototype.setData = function(data){
 	
 	this.$().append("<p><b>"+data.toBBOX()+"</b>");
 	this.loadDataLayer();
+	
 }
 OsmData.prototype.setQuery = function(query){
 	this.Panel.setQuery.call(this, query);    // Call super-class method (if desired)
@@ -161,10 +163,18 @@ OsmData.prototype.onLayerLoaded = function (request){
   }
   html += "</ul>";
   this.OSMCZ_panel.$().append(html);
+
+	extent = OpenLayers.Layer.Vector.prototype.getDataExtent.call({features: browseFeatureList});
+  OSMCZ.map.setCenter(extent.getCenterLonLat()); 
+
   
   if (browseFeatureList.length < 130 || window.confirm("Zobrazit na mapě >130 objektů?")){
     this.OSMCZ_panel.layer.addFeatures(browseFeatureList);
   }
+  
+  
+ 	this.OSMCZ_panel.$().find('li').ellipsis();
+
 }
 
 OsmData.prototype.onFeatureSelect = function(feature){
@@ -193,18 +203,188 @@ OsmData.buildQuery = function(data){
   function featureType(feature) {
     if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
       return "node";
+    } else if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+    	return "way"; // browse/way/123123
     } else {
       return "way";
     }
   }
 
   function featureName(feature) {
-    if (feature.attributes['name:cs']) {
-      return feature.attributes['name:cs'];
-    } else if (feature.attributes['name']) {
-      return feature.attributes['name'];
-    } else {
-      return feature.osm_id;
-    }
+  	tagy = 'name:cs,name,'
+					+'highway,cycleway,barrier,cycleway,waterway,railway,'
+					+'bridge,tunnel,aeroway,aerialway,power,man_made,leisure,amenity,'
+					+'shop,tourism,historic,landuse,military,natural,sport,'
+					+'building,boundary';
+		tagy = tagy.split(',');
+		
+		for (var i in tagy){
+			var tag = feature.attributes[tagy[i]];
+			if(tag == 'yes')
+				return tagy[i];
+			if(tag)
+				return tag;
+		}
+		
+		for (var key in feature.attributes){
+			if(key.substr(0,6) != 'source')
+				return key + "="+feature.attributes[key];
+		}
+    
+    return feature.osm_id;
   }
+
+
+
+
+
+
+/*
+
+
+<div>
+  <div style="text-align: center;">
+    <p style="margin-top: 10px; margin-bottom: 20px;">
+      <a style="display: none;" id="browse_select_view" href="#">Ukázat data k zobrazené mapě</a>
+      <br>
+      <a id="browse_select_box" href="#">Ručně vybrat jinou oblast</a>  
+    </p>
+  </div>
+
+  <div id="browse_status" style="text-align: center; display: none;"></div>
+  <div id="browse_content"><div style="text-align: center; margin-bottom: 20px;"><a href="#">Zobrazit seznam objektů</a></div><table class="browse_heading" width="100%"><tr><td>County Road 35</td><td align="right"><a href="/browse/way/8759286">Detaily</a></td></tr></table><div class="browse_details"><ul><li><b>highway</b>: residential</li><li><b>name</b>: County Road 35</li><li><b>name_1</b>: Crary Mills-Eben Rd</li><li><b>name_2</b>: County Road 66</li><li><b>tiger:cfcc</b>: A41</li><li><b>tiger:county</b>: St. Lawrence, NY</li><li><b>tiger:name_base</b>: County Road 35</li><li><b>tiger:name_base_1</b>: Crary Mills-Eben</li><li><b>tiger:name_base_2</b>: County Road 66</li><li><b>tiger:name_type_1</b>: Rd</li><li><b>tiger:separated</b>: no</li><li><b>tiger:source</b>: tiger_import_dch_v0.6_20070829</li><li><b>tiger:tlid</b>: 155179332</li><li><b>tiger:upload_uuid</b>: bulk_upload.pl-f924af11-2b11-40e3-a545-e3041c449159</li><li><b>tiger:zip_left</b>: 13676</li><li><b>tiger:zip_right</b>: 13617</li></ul></div><table class="browse_heading" width="100%"><tr><td>Historie pro County Road 35</td><td align="right"><a href="/browse/way/8759286/history">Detaily</a></td></tr></table><div class="browse_details"><ul><li>Upravil RussNelson dne 2010-06-28T05:33:01Z</li><li>Upravil RussNelson dne 2009-10-04T23:45:00Z</li><li>Upravil DaveHansenTiger dne 2007-10-10T12:35:07Z</li></ul></div></div>
+
+</div>
+
+*/
+
+
+
+function onFeatureSelect(feature) {
+  // Unselect previously selected feature
+
+  // Redraw in selected style
+
+      
+  // Create a link back to the object list
+  var div = document.createElement("div");
+  div.style.textAlign = "center";
+  div.style.marginBottom = "20px";
+  $("browse_content").appendChild(div);
+  var link = document.createElement("a");
+  link.href = "#";
+  link.onclick = loadObjectList;
+  link.appendChild(document.createTextNode("Zobrazit seznam objektů"));
+  div.appendChild(link);
+
+  var table = document.createElement("table");
+  table.width = "100%";
+  table.className = "browse_heading";
+  $("browse_content").appendChild(table);
+
+  var tr = document.createElement("tr");
+  table.appendChild(tr);
+
+  var heading = document.createElement("td");
+  heading.appendChild(document.createTextNode(featureNameSelect(feature)));
+  tr.appendChild(heading);
+
+  var td = document.createElement("td");
+  td.align = "right";
+  tr.appendChild(td);
+
+  var type = featureType(feature);
+  var link = document.createElement("a");   
+  link.href = "/browse/" + type + "/" + feature.osm_id;
+  link.appendChild(document.createTextNode("Detaily"));
+  td.appendChild(link);
+
+  var div = document.createElement("div");
+  div.className = "browse_details";
+
+  $("browse_content").appendChild(div);
+
+  // Now the list of attributes
+  var ul = document.createElement("ul");
+  for (var key in feature.attributes) {
+    var li = document.createElement("li");
+    var b = document.createElement("b");
+    b.appendChild(document.createTextNode(key));
+    li.appendChild(b);
+    li.appendChild(document.createTextNode(": " + feature.attributes[key]));
+    ul.appendChild(li);
+  }
+      
+  div.appendChild(ul);
+      
+  var link = document.createElement("a");   
+  link.href =  "/browse/" + type + "/" + feature.osm_id + "/history";
+  link.appendChild(document.createTextNode("Zobrazit historii"));
+  link.onclick = OpenLayers.Function.bind(loadHistory, {
+    type: type, feature: feature, link: link
+  });
+      
+  div.appendChild(link);
+
+  // Stash the currently drawn feature
+  browseActiveFeature = feature; 
+}   
+
+function loadHistory() {
+  this.link.href = "";
+  this.link.innerHTML = "Čekejte...";
+
+  new Ajax.Request("/api/0.6/" + this.type + "/" + this.feature.osm_id + "/history", {
+    onComplete: OpenLayers.Function.bind(displayHistory, this)
+  });
+
+  return false;
+}
+
+function displayHistory(request) {
+  if (browseActiveFeature.osm_id != this.feature.osm_id || $("browse_content").firstChild == browseObjectList)  { 
+      return false;
+  } 
+
+  this.link.parentNode.removeChild(this.link);
+
+  var doc = request.responseXML;
+
+  var table = document.createElement("table");
+  table.width = "100%";
+  table.className = "browse_heading";
+  $("browse_content").appendChild(table);
+
+  var tr = document.createElement("tr");
+  table.appendChild(tr);
+
+  var heading = document.createElement("td");
+  heading.appendChild(document.createTextNode(i18n("Historie pro [[feature]]", { feature: featureNameHistory(this.feature) })));
+  tr.appendChild(heading);
+
+  var td = document.createElement("td");
+  td.align = "right";
+  tr.appendChild(td);
+
+  var link = document.createElement("a");   
+  link.href = "/browse/" + this.type + "/" + this.feature.osm_id + "/history";
+  link.appendChild(document.createTextNode("Detaily"));
+  td.appendChild(link);
+
+  var div = document.createElement("div");
+  div.className = "browse_details";
+
+  var nodes = doc.getElementsByTagName(this.type);
+  var history = document.createElement("ul");  
+  for (var i = nodes.length - 1; i >= 0; i--) {
+    var user = nodes[i].getAttribute("user") || "anonym";
+    var timestamp = nodes[i].getAttribute("timestamp");
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(i18n("Upravil [[user]] dne [[timestamp]]", { user: user, timestamp: timestamp })));
+    history.appendChild(item);
+  }
+  div.appendChild(history);
+
+  $("browse_content").appendChild(div); 
+}
 

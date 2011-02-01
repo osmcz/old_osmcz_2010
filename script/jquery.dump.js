@@ -17,6 +17,7 @@ $.fn.dump = function() {
 $.dump = function(object) {
    var recursion = function(obj, level) {
       if(!level) level = 0;
+      if(level > 2) return '**recursion level 3**';
       var dump = '', p = '';
       for(i = 0; i < level; i++) p += "\t";
       

@@ -24,11 +24,19 @@ var OSMCZ = {
 			units: 'm',
 			projection: new OpenLayers.Projection("EPSG:900913"), //v metrech pro mercatora
 			displayProjection: new OpenLayers.Projection("EPSG:4326"), //latlon
-			control: [
+			controls:[
+				new OpenLayers.Control.Navigation(),
+				new OpenLayers.Control.PanZoomBar(),
 				new OpenLayers.Control.LayerSwitcher(),
-				new OpenLayers.Control.MousePosition()
-			]
+				new OpenLayers.Control.Attribution(),
+				new OpenLayers.Control.Permalink(),
+				new OpenLayers.Control.ScaleLine(),
+				new OpenLayers.Control.OverviewMap(),
+				new OpenLayers.Control.MousePosition()]
 		});
+		//OSMCZ.map.addControl(new OpenLayers.Control.LayerSwitcher());
+		//OSMCZ.map.addControl(new OpenLayers.Control.MousePosition());
+
 		map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
 		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
 		OpenLayers.ProxyHost = "./proxy.php?url=";

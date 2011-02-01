@@ -57,6 +57,7 @@
 	<div class="middlepanel">
 		<a href="#no" id="leftpanel_toggle" title="vysunout/zasunout levý panel">&laquo;</a>
 		<div class="aright">
+			<a href="#osmdata:14.298938,50.093561,14.301845,50.096507" class="osmczlink">osmdata</a> &#149;
 			<a href="#print" class="osmczlink">tisk</a> &#149;
 			<a href="#export" class="osmczlink">export</a> &#149; 
 			<a href="#permalink" class="osmczlink">permalink</a> &#149;
