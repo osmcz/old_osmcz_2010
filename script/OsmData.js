@@ -5,12 +5,14 @@ var OsmData = function(){
 	this.setId();
 	this.setTitle(this.id);
 	
-	this.$().append("<input type='button' name='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
-								 +"<br><input type='button' name='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
+	this.$().append("<p>Zde je možno zobrazit geometrii mapových dat - body, cesty, relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
+			+"<p><input type='button' name='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
+			+"<p><input type='button' name='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
 	
 	
 	var panel = this;
-	//poslouchat kliknutí na button uvnitř panelu
+	
+	//listen mouseover on <osmczbutton>s
 	this.$().find('.osmczbutton').live('mouseover', function(e){
 	
 		var feature = panel.layer.features[$(this).attr('data-fid')];
@@ -33,7 +35,11 @@ OsmData.prototype.browseSelectControl = null;
 OsmData.prototype.setData = function(data){
 	this.Panel.setData.call(this, data);    // Call super-class method (if desired)
 	
-	this.$().append("<p><b>"+data.toBBOX()+"</b>");
+	this.$().append("<p><br><b>Vybraná oblast:</b>"
+			+"<p><a href='#bbox:"+data.toBBOX()+"'>BBOX</a>  <input type='text' value='"+data.toBBOX()+"' style='font-size:90%' onfocus='this.select()'> <input type='checkbox' name='showBbox' class='osmczbutton'>"
+			+"<p><label><input type='checkbox' name='showLayer' class='osmczbutton' checked='checked'> zobrazit mapu</label>"
+			);
+			
 	this.loadDataLayer();
 	
 }
@@ -79,16 +85,35 @@ OsmData.prototype.buttonClicked = function(obj){
 		obj.attr('value', 'Nakreslit obdelník');
 		
 	}
+	else if(objName == 'showBbox'){
+		if(!obj[0].checked){ //called after changed the checked
+			this.layer.removeFeatures(this.box);
+		}
+		else {
+			if(!this.box)
+				this.box = new OpenLayers.Feature.Vector(fromLL(this.data).toGeometry(), {}, {
+					strokeWidth: 2,
+					strokeColor: '#ee9900',
+					fill: false
+				});
+			
+			this.layer.addFeatures(this.box);
+		
+		}
+		return true;
+	}
+
 }
+OsmData.prototype.box = null;
 
 OsmData.prototype.endDrag = function(bounds){
 	OSMCZ.boxSelectControl.deactivate();
 	this.lastObj.attr('name', 'enableBoxSelector');
 	this.lastObj.attr('value', 'Nakreslit obdelník');
 
-	data = toLL(bounds.getBounds());
-	this.setData(data);
-	this.setQuery(OsmData.buildQuery(data));
+	//data = toLL(bounds.getBounds());
+	//this.setData(data);
+	//this.setQuery(OsmData.buildQuery(data));
 }
 
 
@@ -173,8 +198,6 @@ OsmData.prototype.onLayerLoaded = function (request){
   }
   
   
- 	this.OSMCZ_panel.$().find('li').ellipsis();
-
 }
 
 OsmData.prototype.onFeatureSelect = function(feature){
@@ -200,6 +223,8 @@ OsmData.buildQuery = function(data){
 
 
 
+
+
   function featureType(feature) {
     if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
       return "node";
@@ -211,27 +236,27 @@ OsmData.buildQuery = function(data){
   }
 
   function featureName(feature) {
-  	tagy = 'name:cs,name,'
+  	var interstingTags = /*'name:cs,*/'name,'
 					+'highway,cycleway,barrier,cycleway,waterway,railway,'
 					+'bridge,tunnel,aeroway,aerialway,power,man_made,leisure,amenity,'
 					+'shop,tourism,historic,landuse,military,natural,sport,'
 					+'building,boundary';
-		tagy = tagy.split(',');
+		interstingTags = interstingTags.split(',');
 		
-		for (var i in tagy){
-			var tag = feature.attributes[tagy[i]];
-			if(tag == 'yes')
-				return tagy[i];
-			if(tag)
-				return tag;
+		for (var i in interstingTags){ //return interesting tag's value
+			var key = interstingTags[i];
+			var val = feature.attributes[key];
+			if(val == 'yes') return key;
+			if(val && key == 'name') return "<b>"+val+"</b>";
+			if(val) return val;
 		}
 		
-		for (var key in feature.attributes){
+		for (var key in feature.attributes){ //otherwise return first non-source tag
 			if(key.substr(0,6) != 'source')
-				return key + "="+feature.attributes[key];
+				return key //+ "="+feature.attributes[key];
 		}
     
-    return feature.osm_id;
+    return feature.osm_id; //no attributes - return ID
   }
 
 

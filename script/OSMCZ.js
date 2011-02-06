@@ -99,8 +99,7 @@ var OSMCZ = {
 		
 		//poslouchat kliknutí na button uvnitř panelu
 		$('.osmczbutton').live('click', function(e){
-			OSMCZ.thisPanel(this).buttonClicked($(this));
-			return false;
+			return OSMCZ.thisPanel(this).buttonClicked($(this));
 		});
 
 		//togglovátko na levý panel
@@ -249,7 +248,7 @@ var OSMCZ = {
 	/** debug(str)
 	 */	
 	debug: function(str){
-		$('body').append('<small>'+str+'</small><br>');
+		//$('body').append('<small>'+str+'</small><br>');
 		//$('#js-panelsContainer').append('<small>'+str+'</small><br>');
 	},
 	
