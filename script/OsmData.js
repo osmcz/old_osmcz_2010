@@ -28,9 +28,17 @@ var OsmData = function(){
 		return false;
 	});
 }
-OsmData.prototype = new DataPanel();
-OsmData.prototype.layer = null;  ///always store .data as LL (epsg:4326)
+OsmData.prototype = new DataPanel(); ///always store .data as LL (epsg:4326)
+
+/** Vector data layer */
+OsmData.prototype.layer = null;
+
+/** Feature displaying data extent */
+OsmData.prototype.dataBox = null;
+
+/** Control for clicking the vector features */
 OsmData.prototype.browseSelectControl = null;
+
 
 OsmData.prototype.setData = function(data){
 	this.Panel.setData.call(this, data);    // Call super-class method (if desired)
@@ -49,78 +57,78 @@ OsmData.prototype.setQuery = function(query){
 	OSMCZ.lastHash = window.location.hash = '#'+this.getQuery();
 }
 
-OsmData.prototype.buttonClicked = function(obj){
-	if(obj.attr('tagName') == "A"){
-    for (var i = 0; i < this.layer.selectedFeatures.length; i++) { //unselect previous
-      var f = this.layer.selectedFeatures[i]; 
-      this.layer.drawFeature(f, this.layer.styleMap.createSymbolizer(f, "default"));
-    }
-    
-    var feature = this.layer.features[obj.attr('data-fid')];
-    this.onFeatureSelect(feature);
-    OSMCZ.map.setCenter(feature.geometry.getBounds().getCenterLonLat()); 
-    return false;
-	
-	}
-
-	var objName = obj.attr('name');
-	 
-	if(objName == 'showCurrent'){
-		data = toLL(OSMCZ.map.getExtent());
-		this.setData(data);
-		this.setQuery(OsmData.buildQuery(data));
-		
-	}
-	else if(objName == 'enableBoxSelector'){
-		OSMCZ.boxSelectControl.handler.callbacks.done = OpenLayers.Function.bind(this.endDrag, this);
-		OSMCZ.boxSelectControl.activate();
-		obj.attr('name', 'disableBoxSelector');
-		obj.attr('value','Zrušit výběr');
-		this.lastObj = obj;
-		
-	}
-	else if(objName == 'disableBoxSelector'){
-		OSMCZ.boxSelectControl.deactivate();
-		obj.attr('name', 'enableBoxSelector');
-		obj.attr('value', 'Nakreslit obdelník');
-		
-	}
-	else if(objName == 'showBbox'){
-		if(!obj[0].checked){ //called after changed the checked
-			this.layer.removeFeatures(this.box);
-		}
-		else {
-			if(!this.box)
-				this.box = new OpenLayers.Feature.Vector(fromLL(this.data).toGeometry(), {}, {
-					strokeWidth: 2,
-					strokeColor: '#ee9900',
-					fill: false
-				});
-			
-			this.layer.addFeatures(this.box);
-		
-		}
-		return true;
-	}
-
+OsmData.prototype.handle_featureLink = function(obj){
+	//unselect all selected
+  for (var i = 0; i < this.layer.selectedFeatures.length; i++) {
+    var f = this.layer.selectedFeatures[i]; 
+    this.layer.drawFeature(f, this.layer.styleMap.createSymbolizer(f, "default"));
+  }
+  
+  //get clicked feature and select
+  var feature = this.layer.features[obj.attr('data-fid')];
+  this.onFeatureSelect(feature);
+  OSMCZ.map.setCenter(feature.geometry.getBounds().getCenterLonLat()); 
+  return false;
 }
-OsmData.prototype.box = null;
 
+OsmData.prototype.buttonClicked = function(obj){
+	if(this['handle_'+obj.attr('name')])
+		return this['handle_'+obj.attr('name')](obj);
+	
+	if(obj.attr('data-fid'))
+		return this.handle_featureLink(obj);
+}
+
+	
+	
+OsmData.prototype.handle_showCurrent = function(obj){
+	data = toLL(OSMCZ.map.getExtent());
+	this.setData(data);
+	this.setQuery(OsmData.buildQuery(data));
+}
+OsmData.prototype.handle_enableBoxSelector = function(obj){
+	OSMCZ.boxSelectControl.handler.callbacks.done = OpenLayers.Function.bind(this.endDrag, this);
+	OSMCZ.boxSelectControl.activate();
+	obj.attr('name', 'disableBoxSelector');
+	obj.attr('value','Zrušit výběr');
+	this.lastObj = obj;
+}
 OsmData.prototype.endDrag = function(bounds){
 	OSMCZ.boxSelectControl.deactivate();
 	this.lastObj.attr('name', 'enableBoxSelector');
 	this.lastObj.attr('value', 'Nakreslit obdelník');
 
-	//data = toLL(bounds.getBounds());
-	//this.setData(data);
-	//this.setQuery(OsmData.buildQuery(data));
+	data = toLL(bounds.getBounds());
+	this.setData(data);
+	this.setQuery(OsmData.buildQuery(data));
 }
+
+OsmData.prototype.handle_disableBoxSelector = function(obj){
+	OSMCZ.boxSelectControl.deactivate();
+	obj.attr('name', 'enableBoxSelector');
+	obj.attr('value', 'Nakreslit obdelník');
+}
+OsmData.prototype.handle_showBbox = function(obj){
+		if(obj[0].checked){ //called after the box is checked
+			if(!this.dataBox)
+				this.dataBox = new OpenLayers.Feature.Vector(fromLL(this.data).toGeometry(), {}, {
+					strokeWidth: 2,
+					strokeColor: '#ee9900',
+					fill: false
+				});
+			
+			OSMCZ.boxesLayer.addFeatures(this.dataBox);
+		}
+		else {
+			OSMCZ.boxesLayer.removeFeatures(this.dataBox);
+		}
+		return true;
+}
+
 
 
 OsmData.prototype.loadDataLayer = function () {
 	url = "http://www.openstreetmap.org/api/0.6/map?bbox=" + this.getData().toBBOX();
-  //setStatus("Načítá se…");
-  //$("browse_content").innerHTML = "";
 
   if (!this.layer) {
     var style = new OpenLayers.Style();
@@ -135,11 +143,6 @@ OsmData.prototype.loadDataLayer = function () {
 
     this.layer = new OpenLayers.Layer.GML("Data", url, {
     	OSMCZ_panel: this,
-      format: OpenLayers.Format.OSM,
-      formatOptions: {
-        checkTags: true, 
-        interestingTagsExclude: ['source','source_ref','source:ref','history','attribution','created_by','tiger:county','tiger:tlid','tiger:upload_uuid']
-      },
       maxFeatures: 100,
       requestSuccess: this.onLayerLoaded,
       displayInLayerSwitcher: false,
@@ -148,56 +151,49 @@ OsmData.prototype.loadDataLayer = function () {
         'select': { strokeColor: '#0000ff', strokeWidth: 8, strokeOpacity: '0.4' }
       })
     });
-    //this.layer.events.register("loadend", this.layer, this.onLayerLoaded );
     OSMCZ.map.addLayer(this.layer);
     
+    
     this.browseSelectControl = new OpenLayers.Control.SelectFeature(this.layer, { onSelect: this.onFeatureSelect });
-    this.browseSelectControl.handlers.feature.stopDown = false;
-    this.browseSelectControl.handlers.feature.stopUp = false;
     OSMCZ.map.addControl(this.browseSelectControl);
     this.browseSelectControl.activate();
   } else {
     this.layer.setUrl(url);
   }
-
-  //browseActiveFeature = null;
 }
 
 OsmData.prototype.onLayerLoaded = function (request){
-	//    if (this.map.dataLayer.active) {
-	
   var doc = request.responseXML;
   if (!doc || !doc.documentElement)
     doc = request.responseText;
 
-  var options = {};
-  OpenLayers.Util.extend(options, this.formatOptions);
-  options.externalProjection = OSMCZ.map.displayProjection;
-  options.internalProjection = OSMCZ.map.projection;
-
-  var gml = this.format ? new this.format(options) : new OpenLayers.Format.GML(options);
-  browseFeatureList = gml.read(doc);	
+	//parse the incoming data
+  var gml = new OpenLayers.Format.OSM({
+        checkTags: true,
+        interestingTagsExclude: ['source','source_ref','source:ref','history','attribution','created_by','tiger:county','tiger:tlid','tiger:upload_uuid'],
+				externalProjection: OSMCZ.map.displayProjection,
+				internalProjection: OSMCZ.map.projection
+      });
+  browseFeatureList = gml.read(doc);
 	
+	//generate html with feature links
 	var html = "<ul>";
   for (var i = 0; i < browseFeatureList.length; i++) {
     var feature = browseFeatureList[i]; 
     var type = featureType(feature);
-    html += "<li>" + type + " "
-        + "<a href='http://osm.org/browse/" + type + "/" + feature.osm_id + "' data-fid='"+i+"' class='osmczbutton'>" 
-				+ featureName(feature) + "</a>"; //viewFeatureLink  
+    html += "<li>"+type+" <a href='http://osm.org/browse/"+type+"/"+feature.osm_id+"' data-fid='"+i+"' class='osmczbutton'>"+featureName(feature)+"</a>"; 
   }
   html += "</ul>";
   this.OSMCZ_panel.$().append(html);
 
+	//calculate the data extent
 	extent = OpenLayers.Layer.Vector.prototype.getDataExtent.call({features: browseFeatureList});
-  OSMCZ.map.setCenter(extent.getCenterLonLat()); 
+  OSMCZ.map.setCenter(extent.getCenterLonLat());
 
-  
+  //add the features in layer
   if (browseFeatureList.length < 130 || window.confirm("Zobrazit na mapě >130 objektů?")){
     this.OSMCZ_panel.layer.addFeatures(browseFeatureList);
   }
-  
-  
 }
 
 OsmData.prototype.onFeatureSelect = function(feature){
@@ -218,6 +214,10 @@ OsmData.parseQuery = function(query){
 OsmData.buildQuery = function(data){
 	return 'osmdata:' + data.toBBOX();
 }
+
+
+
+
 
 
 

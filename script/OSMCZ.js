@@ -20,6 +20,7 @@ var OSMCZ = {
 	},
 	
 	init_map: function(){
+		OpenLayers.ProxyHost = "./proxy.php?url=";
 		var map = OSMCZ.map = new OpenLayers.Map('map',{
 			units: 'm',
 			projection: new OpenLayers.Projection("EPSG:900913"), //v metrech pro mercatora
@@ -34,29 +35,36 @@ var OSMCZ = {
 				new OpenLayers.Control.OverviewMap(),
 				new OpenLayers.Control.MousePosition()]
 		});
-		//OSMCZ.map.addControl(new OpenLayers.Control.LayerSwitcher());
-		//OSMCZ.map.addControl(new OpenLayers.Control.MousePosition());
 
-		map.addLayers([new OpenLayers.Layer.OSM("Mapnik")]);
-		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
-		OpenLayers.ProxyHost = "./proxy.php?url=";
+		//blank layer - same projection as Mapnik
+    map.addLayer(new OpenLayers.Layer("Blank",{
+			isBaseLayer: true,
+			maxExtent: new OpenLayers.Bounds(
+			    -128 * 156543.0339,
+			    -128 * 156543.0339,
+			    128 * 156543.0339,
+			    128 * 156543.0339
+			),
+			maxResolution: 156543.0339,
+			numZoomLevels: 21,
+			units: "m",
+			projection: "EPSG:900913"
+		}));
 		
+		//Mapnik layer
+		map.addLayer(new OpenLayers.Layer.OSM("Mapnik"));
 		
+		//vector layer for dataBoxes and boxSelector
+		OSMCZ.boxesLayer = new OpenLayers.Layer.Vector("Boxes");
+    OSMCZ.map.addLayer(OSMCZ.boxesLayer);
 		
-		//obelníkové vybírátko  
-		var vectors = new OpenLayers.Layer.Vector();
-    OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(vectors, OpenLayers.Handler.RegularPolygon, { 
-      handlerOptions: {
-        sides: 4,
-        snapAngle: 90,
-        irregular: true,
-        persist: true
-      }
-    });
-    map.addControl(OSMCZ.boxSelectControl);
-    //usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
-
+		//user box selector  --> usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
+    OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.Box); 
+    OSMCZ.map.addControl(OSMCZ.boxSelectControl);
     
+    
+    //set map center
+		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
 	},
 	
 	init_panels: function(){
