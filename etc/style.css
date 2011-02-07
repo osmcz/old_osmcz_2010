@@ -265,4 +265,4 @@ p.spacer {margin-top: 1em;}
 .footer a {color: gray;}
 
 
-.panel li {white-space: nowrap;}
+.panel .nowrap li {white-space: nowrap;}

@@ -16,14 +16,14 @@ var OsmData = function(){
 	this.$().find('.osmczbutton').live('mouseover', function(e){
 	
 		var feature = panel.layer.features[$(this).attr('data-fid')];
-		if(!feature) return false; //we dont care about showCurrent and enableBoxSelecto 
+		if(!feature) return false; //we dont care about showCurrent and enableBoxSelector
 		
-		for (var i = 0; i < panel.layer.selectedFeatures.length; i++) { //unselect previous
+		for (var i in panel.layer.selectedFeatures) { //unselect previous
 			var f = panel.layer.selectedFeatures[i]; 
-			panel.layer.drawFeature(f, panel.layer.styleMap.createSymbolizer(f, "default"));
+			panel.layer.drawFeature(f, 'default');
 		}
 		
-		panel.browseSelectControl.select(feature);
+		panel.dataControl.select(feature);
 		//OSMCZ.map.setCenter(feature.geometry.getBounds().getCenterLonLat());
 		return false;
 	});
@@ -37,7 +37,12 @@ OsmData.prototype.layer = null;
 OsmData.prototype.dataBox = null;
 
 /** Control for clicking the vector features */
-OsmData.prototype.browseSelectControl = null;
+OsmData.prototype.dataControl = null;
+OsmData.prototype.setDataControl = function (obj){
+	this.dataControl = obj;
+	OSMCZ.map.addControl(obj);
+  obj.activate();
+}
 
 
 OsmData.prototype.setData = function(data){
@@ -57,6 +62,19 @@ OsmData.prototype.setQuery = function(query){
 	OSMCZ.lastHash = window.location.hash = '#'+this.getQuery();
 }
 
+OsmData.prototype.buttonClicked = function(obj){
+	if(this['handle_'+obj.attr('name')])
+		return this['handle_'+obj.attr('name')](obj);
+	
+	if(obj.attr('data-fid'))
+		return this.handle_featureLink(obj);
+}
+
+
+
+
+
+
 OsmData.prototype.handle_featureLink = function(obj){
 	//unselect all selected
   for (var i = 0; i < this.layer.selectedFeatures.length; i++) {
@@ -71,13 +89,7 @@ OsmData.prototype.handle_featureLink = function(obj){
   return false;
 }
 
-OsmData.prototype.buttonClicked = function(obj){
-	if(this['handle_'+obj.attr('name')])
-		return this['handle_'+obj.attr('name')](obj);
-	
-	if(obj.attr('data-fid'))
-		return this.handle_featureLink(obj);
-}
+
 
 	
 	
@@ -132,7 +144,6 @@ OsmData.prototype.loadDataLayer = function () {
 
   if (!this.layer) {
     var style = new OpenLayers.Style();
-
     style.addRules([new OpenLayers.Rule({
       symbolizer: {
         Polygon: { fillColor: '#ff0000', strokeColor: '#ff0000', strokeWidth: 2, fillOpacity: '0.2' },
@@ -153,14 +164,12 @@ OsmData.prototype.loadDataLayer = function () {
     });
     OSMCZ.map.addLayer(this.layer);
     
-    
-    this.browseSelectControl = new OpenLayers.Control.SelectFeature(this.layer, { onSelect: this.onFeatureSelect });
-    OSMCZ.map.addControl(this.browseSelectControl);
-    this.browseSelectControl.activate();
+    this.setDataControl(new OpenLayers.Control.SelectFeature(this.layer, { onSelect: this.onFeatureSelect }));
   } else {
     this.layer.setUrl(url);
   }
 }
+
 
 OsmData.prototype.onLayerLoaded = function (request){
   var doc = request.responseXML;
@@ -177,7 +186,7 @@ OsmData.prototype.onLayerLoaded = function (request){
   browseFeatureList = gml.read(doc);
 	
 	//generate html with feature links
-	var html = "<ul>";
+	var html = "<ul class='nowrap'>";
   for (var i = 0; i < browseFeatureList.length; i++) {
     var feature = browseFeatureList[i]; 
     var type = featureType(feature);

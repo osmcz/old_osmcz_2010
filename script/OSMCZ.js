@@ -73,11 +73,11 @@ var OSMCZ = {
 		OSMCZ.statics.routingform = new RoutingForm();
 		OSMCZ.statics.upload = new Upload();
 		OSMCZ.statics.print = new Print();
-                OSMCZ.statics.exportmap = new ExportMap();
+		OSMCZ.statics.exportmap = new ExportMap();
 		OSMCZ.statics.permalink = new Permalink();
 		OSMCZ.statics.feedback = new WebPage('feedback', 'Feedback');
 		
-		// dynamics - shows up in Summary-Panel
+		// non-statics - shows up in Summary-Panel
 		OSMCZ.dataPanels = [Home, Routing, MapUrl, OsmData]; //Routing,OsmData,Coords,Address,BBox,MapUrl
 		
 		// Home panel

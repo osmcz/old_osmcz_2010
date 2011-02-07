@@ -77,20 +77,15 @@
 			 <li><a href="">jak přispět</a></li>
 			</ul>
 			-->
-	<ol>
-	<li>Nápad pravé vyběrátko map + překryvné vrstvy. Hlavně logiku a rozvržení.
-	<li>HASHCHANGE: zlobí tabchooser, nenačítat dvakrát, některé nemají být &lt;a&gt;
-	<li>design panelů
-	</ol>
-	<ul>
-	<li>&lt;Routing> &lt;OsmData> 
+<p>&lt;Routing> &lt;OsmData> 
 	&lt;Coords>
 &lt;Address>
 &lt;BBox>
 &lt;MapUrl> 
-	<li>zelená ikonka s trojuhelnikem a červená se čtverečkem
-	</ul>	
-* Mapnik<br>
+<p>RoutingForm Summary Upload WebPage
+<p>ExportMap MapUrl OsmData Permalink Print Home
+
+<p>* Mapnik<br>
 * Osmarender<br>
 * Cyclo<br>
 * MTB<br>
