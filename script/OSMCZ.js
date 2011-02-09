@@ -36,6 +36,9 @@ var OSMCZ = {
 				new OpenLayers.Control.MousePosition()]
 		});
 
+		//Mapnik layer
+		map.addLayer(new OpenLayers.Layer.OSM("Mapnik"));
+		
 		//blank layer - same projection as Mapnik
     map.addLayer(new OpenLayers.Layer("Blank",{
 			isBaseLayer: true,
@@ -50,9 +53,6 @@ var OSMCZ = {
 			units: "m",
 			projection: "EPSG:900913"
 		}));
-		
-		//Mapnik layer
-		map.addLayer(new OpenLayers.Layer.OSM("Mapnik"));
 		
 		//vector layer for dataBoxes and boxSelector
 		OSMCZ.boxesLayer = new OpenLayers.Layer.Vector("Boxes");
@@ -255,8 +255,9 @@ var OSMCZ = {
 	
 	/** debug(str)
 	 */	
-	debug: function(str){
-		//$('body').append('<small>'+str+'</small><br>');
+	debug: function(str){},
+	debug2: function(str){
+		$('body').append('<small>'+str+'</small><br>');
 		//$('#js-panelsContainer').append('<small>'+str+'</small><br>');
 	},
 	
