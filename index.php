@@ -120,10 +120,10 @@
 		</div>
 
 		<div id='upload' class='hidden panel'>
-			<form action="#">
-			<p>Soubor z počítače:<br> <input type='file' class='file'><br>
+			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="return OSMCZ.thisPanel(this).submitted()">
+			<p>Soubor z počítače:<br> <input type='file' name='file' class='file' id='upload-file'><br>
 			<small>Soubory: GPX, KML, OSM (max 2MB)</small>
-			<br><input type='submit' value='Nahrát'>
+			<br><input type='submit' value='Nahrát'> <img src="etc/ajax-loader.gif" alt='loading...' id='upload-loading' style='display:none;vertical-align:text-bottom;'>
 			</form>
 			
 			<p class='small'>Soubor obsahující body, linie a plochy bude zobrazen na mapě. Též lze zobrazit výškový profil, časy a délky.
@@ -180,7 +180,7 @@
 
 	</div>
 	
-	<div class="middlepanel"><div id="map"></div></div>
+	<div class="middlepanel"><div id="map"><noscript>CHYBA: Máte vypnutý JavaScript a bez něj to bohužel nepůjde :-)</noscript></div></div>
 		
 </div><!-- /maincontent -->
 
