@@ -10,8 +10,8 @@ var OsmData = function(){
 	this.listDiv = this.$().find('.listDiv');
 	
 	this.listDiv.append("<p>Zde je možno zobrazit geometrii mapových dat - body, cesty, relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
-			+"<p><input type='button' name='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
-			+"<p><input type='button' name='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
+			+"<p><input type='button' data-action='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
+			+"<p><input type='button' data-action='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
 	
 	
 	var panel = this;
@@ -19,7 +19,7 @@ var OsmData = function(){
 	//listen mouseover on <osmczbutton>s
 	this.$().find('.osmczbutton').live('mouseover', function(e){
 		var feature = panel.layer.features[$(this).attr('data-fid')];
-		if(!feature) return false; //we dont care about showCurrent and enableBoxSelector
+		if(!feature) return false; //we are intersted only in features
 		
 		while(f = panel.layer.selectedFeatures.pop()) //unselect all previous
 			panel.layer.drawFeature(f, 'default');
@@ -56,8 +56,8 @@ OsmData.prototype.setData = function(data){
 	this.Panel.setData.call(this, data);    // Call super-class method (if desired)
 	
 	this.listDiv.append("<p><br><b>Vybraná oblast:</b>"
-			+"<p><a href='#bbox:"+data.toBBOX()+"'>BBOX</a>  <input type='text' value='"+data.toBBOX()+"' style='font-size:90%' onfocus='this.select()'> <input type='checkbox' name='showBbox' class='osmczbutton'>"
-			+"<p><label><input type='checkbox' name='showLayer' class='osmczbutton' checked='checked'> zobrazit mapu</label>"
+			+"<p><a href='#bbox:"+data.toBBOX()+"'>BBOX</a>  <input type='text' value='"+data.toBBOX()+"' style='font-size:90%' onfocus='this.select()'> <input type='checkbox' data-action='showBbox' class='osmczbutton'>"
+			+"<p><label><input type='checkbox' data-action='showLayer' class='osmczbutton' checked='checked'> zobrazit mapu</label>"
 			);
 			
 	this.loadDataLayer();
@@ -69,9 +69,9 @@ OsmData.prototype.setQuery = function(query){
 	OSMCZ.lastHash = window.location.hash = '#'+this.getQuery();
 }
 
-OsmData.prototype.buttonClicked = function(obj){
-	if(this['handle_'+obj.attr('name')])
-		return this['handle_'+obj.attr('name')](obj);
+OsmData.prototype.buttonClicked = function(obj){ //panel-wide handler for <osmczbutton>s  //todo:should be moved to <Panel>
+	if(this['handle_'+obj.attr('data-action')])
+		return this['handle_'+obj.attr('data-action')](obj);
 	
 	if(obj.attr('data-fid'))
 		return this.handle_featureLink(obj);
@@ -97,7 +97,7 @@ OsmData.prototype.handle_showLayer = function(obj){
 	
 	
 OsmData.prototype.handle_showCurrent = function(obj){
-	data = toLL(OSMCZ.map.getExtent());
+	var data = toLL(OSMCZ.map.getExtent());
 	this.setData(data);
 	this.setQuery(OsmData.buildQuery(data));
 }
@@ -113,9 +113,9 @@ OsmData.prototype.endDrag = function(bounds){
 	this.lastObj.attr('name', 'enableBoxSelector');
 	this.lastObj.attr('value', 'Nakreslit obdelník');
 
-	data = toLL(bounds.getBounds());
-	this.setData(data);
-	this.setQuery(OsmData.buildQuery(data));
+// 	data = toLL(bounds.getBounds());
+// 	this.setData(data);
+// 	this.setQuery(OsmData.buildQuery(data));
 }
 
 OsmData.prototype.handle_disableBoxSelector = function(obj){
@@ -194,7 +194,7 @@ OsmData.prototype.onLayerLoaded = function (request){
   for (var i = 0; i < browseFeatureList.length; i++) {
     var feature = browseFeatureList[i]; 
     var type = featureType(feature);
-    html += "<li>"+type+" <a href='http://osm.org/browse/"+type+"/"+feature.osm_id+"' data-fid='"+i+"' class='osmczbutton'>"+featureName(feature)+"</a>"; 
+    html += "<li>"+type+" <a href='#"+type+":"+feature.osm_id+"' data-fid='"+i+"' class='osmczbutton'>"+featureName(feature)+"</a>"; 
   }
   html += "</ul>";
   this.OSMCZ_panel.listDiv.append(html);
@@ -230,13 +230,13 @@ OsmData.prototype.onFeatureSelect = function(feature){
 	this.selectedFeature = feature;
 	
 	var html = "<div class='featureInfo'>";
-	html+="<p><input type='button' name='showList' class='osmczbutton' value='&laquo; zpět na seznam'>"
+	html+="<p><span data-action='showList' class='osmczbutton'>&laquo; zpět na seznam</span>"
 	html+="<ul>";
 	for(key in feature.attributes){
 		html+="<li><b>"+key+":</b> "+feature.attributes[key];
 	}
 	html+="</ul>";
-	html+="<p><a href='#showHistory' class='osmczbutton' name='showHistory'>Zobrazit historii</a>";
+	html+="<p><span data-action='showHistory' class='osmczbutton'>Zobrazit historii</span>";
 	html+="<br>Zobrazit na <a href='http://osm.org/browse/"+featureType(feature)+"/"+feature.osm_id+"' onclick='window.open(this.href);return false'>osm.org</a>";
 	html+="<br>V novém panelu <a href='#"+featureType(feature) + ":" + feature.osm_id+"'>"+featureType(feature) + ":" + feature.osm_id+"</a>"
 	html+="</div>";
@@ -260,6 +260,8 @@ OsmData.prototype.handle_showList = function(obj){
 		this.layer.drawFeature(f, 'default');
 }
 OsmData.prototype.handle_showHistory = function(obj){
+	obj.remove();
+		
 	OpenLayers.Request.GET({
 		url: "http://www.openstreetmap.org/api/0.6/"+featureType(this.selectedFeature)+"/"+this.selectedFeature.osm_id+"/history",
 		success: this.onHistoryLoaded,
@@ -269,25 +271,22 @@ OsmData.prototype.handle_showHistory = function(obj){
 	return false;
 }
 OsmData.prototype.onHistoryLoaded = function(request){
-	alert($.dump(request));
-	OSMCZ.debug2($.dump(request));
-
-	var doc = request.responseXML;
-	if (!doc || !doc.documentElement) {
-		doc = OpenLayers.Format.XML.prototype.read(request.responseText);
-	}
-	alert($.dump(doc));
-
+	var doc = request.responseXML ?
+		request.responseXML : 
+		OpenLayers.Format.XML.prototype.read(request.responseText);
 
 	var feature = this.selectedFeature;
+  var nodes = doc.getElementsByTagName(featureType(feature));
 	
-  var html = "<p><br><b>Historie pro " + featureName(feature) +"</b>";
+  var html = "<p><br><b>Historie pro " +feature.osm_id +"</b>";
 	html += "<ul>";
-  var nodes = request.responseXML.getElementsByTagName(featureType(feature));
-  for (var i = nodes.length - 1; i >= 0; i--) {
+  for (var i = nodes.length - 1; i >= 0; i--) { //newest to oldest
     var user = nodes[i].getAttribute("user") || "anonym";
-    var timestamp = nodes[i].getAttribute("timestamp");
-    html += "<a href='http://www.openstreetmap.org/user/"+user+"'>"+user+"</a> <small>"+timestamp+"</small>";
+    var time = nodes[i].getAttribute("timestamp");
+
+    if(user != "anonym") 
+    	user = "<a href='http://www.openstreetmap.org/user/"+user+"'>"+user+"</a>";
+    html += "<li>"+user+" <small>"+time+"</small>";
   }
 	html += "</ul>";
 	

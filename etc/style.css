@@ -241,6 +241,7 @@ p {margin: 0;}
 	color: #000;
 	font-size: 80%;
 	padding: 3px;
+	cursor: pointer; _cursor: hand;
 }
 #summary .item span a:hover {background: red; color:#fff;}
 #summary .item input {
@@ -266,3 +267,14 @@ p.spacer {margin-top: 1em;}
 
 
 .panel .nowrap li {white-space: nowrap;}
+span.osmczbutton {color: blue; text-decoration: underline; cursor: pointer; _cursor: hand;} /*jako odkazy*/
+span.osmczbutton:hover {text-decoration: none}
+
+a[href^="http:"] {
+	background: url(icon_external_site.gif) no-repeat right center;
+	padding: 0 13px 0 0;
+} 
+
+
+
+

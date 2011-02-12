@@ -86,7 +86,7 @@ $.dump = function(object) {
             return match[1] + "(" + match[2] + ")";
          case "window":
          default:
-            dump += 'N/A: ' + t;
+            dump += 'N/A: ' + t + ' ' + obj;
             break;
       }
       
