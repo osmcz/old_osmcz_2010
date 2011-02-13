@@ -107,7 +107,7 @@ var OSMCZ = {
 		
 		//poslouchat kliknutí na button uvnitř panelu
 		$('.osmczbutton').live('click', function(e){
-			return OSMCZ.thisPanel(this).buttonClicked($(this));
+			return OSMCZ.thisPanel(this).buttonClicked(this);
 		});
 
 		//togglovátko na levý panel
@@ -284,6 +284,17 @@ var OSMCZ = {
 			return alert('Unrecoverable error - thisPanel() not found by id: '+id);
 			
 		return panel; 
+	},
+	
+	
+	/** Converts number of meters in human readable km
+	 */	
+	getInKm: function(num){
+		if(num > 10000)
+			return Math.round(num/100)/10 + " km";
+		if(num > 1000)
+			return Math.round(num/10)/100 + " km";
+		return Math.round(num) + " m"; 
 	},
 	
 	

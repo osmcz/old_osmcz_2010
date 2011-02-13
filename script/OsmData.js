@@ -69,11 +69,10 @@ OsmData.prototype.setQuery = function(query){
 	OSMCZ.lastHash = window.location.hash = '#'+this.getQuery();
 }
 
-OsmData.prototype.buttonClicked = function(obj){ //panel-wide handler for <osmczbutton>s  //todo:should be moved to <Panel>
-	if(this['handle_'+obj.attr('data-action')])
-		return this['handle_'+obj.attr('data-action')](obj);
+OsmData.prototype.buttonClicked = function(obj){ //panel-wide handler for <osmczbutton>s
+	this.Panel.buttonClicked.call(this, obj); // Call super-class method (if desired)
 	
-	if(obj.attr('data-fid'))
+	if(obj.getAttribute('data-fid'))
 		return this.handle_featureLink(obj);
 }
 
@@ -82,7 +81,7 @@ OsmData.prototype.buttonClicked = function(obj){ //panel-wide handler for <osmcz
 
 
 OsmData.prototype.handle_showLayer = function(obj){
-	if(obj[0].checked)
+	if(obj.checked)
 		this.layer.styleMap.styles['default'] = this.layer.styleMap.styles['default2'];
 	else
 		this.layer.styleMap.styles['default'] = new OpenLayers.Style({fill: false, display: 'none'});
@@ -102,6 +101,7 @@ OsmData.prototype.handle_showCurrent = function(obj){
 	this.setQuery(OsmData.buildQuery(data));
 }
 OsmData.prototype.handle_enableBoxSelector = function(obj){
+	obj = $(obj);
 	OSMCZ.boxSelectControl.handler.callbacks.done = OpenLayers.Function.bind(this.endDrag, this);
 	OSMCZ.boxSelectControl.activate();
 	obj.attr('name', 'disableBoxSelector');
@@ -120,11 +120,11 @@ OsmData.prototype.endDrag = function(bounds){
 
 OsmData.prototype.handle_disableBoxSelector = function(obj){
 	OSMCZ.boxSelectControl.deactivate();
-	obj.attr('name', 'enableBoxSelector');
-	obj.attr('value', 'Nakreslit obdelník');
+	$(obj).attr('name', 'enableBoxSelector');
+	$(obj).attr('value', 'Nakreslit obdelník');
 }
 OsmData.prototype.handle_showBbox = function(obj){
-		if(obj[0].checked){ //called after the box is checked
+		if(obj.checked){ //called after the box is checked
 			if(!this.dataBox)
 				this.dataBox = new OpenLayers.Feature.Vector(fromLL(this.data).toGeometry(), {}, {
 					strokeWidth: 2,
@@ -216,7 +216,7 @@ OsmData.prototype.handle_featureLink = function(obj){
 		this.layer.drawFeature(f, 'default');
   
   //get clicked feature and select
-  var feature = this.layer.features[obj.attr('data-fid')];
+  var feature = this.layer.features[$(obj).attr('data-fid')];
 	this.dataControl.select(feature); //this.onFeatureSelect(feature);
   return false;
 }
@@ -260,7 +260,7 @@ OsmData.prototype.handle_showList = function(obj){
 		this.layer.drawFeature(f, 'default');
 }
 OsmData.prototype.handle_showHistory = function(obj){
-	obj.remove();
+	$(obj).remove();
 		
 	OpenLayers.Request.GET({
 		url: "http://www.openstreetmap.org/api/0.6/"+featureType(this.selectedFeature)+"/"+this.selectedFeature.osm_id+"/history",

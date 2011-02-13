@@ -81,9 +81,12 @@ var Panel = {
 		}
 	},
 
-	/** Automatically called when .osmczbutton clicked
+	/** Panel-wide handler for <osmczbutton>s
 	 */	
-	buttonClicked: function(htmlobj){},
+	buttonClicked: function(obj){
+		if(this['handle_'+obj.getAttribute('data-action')])
+			return this['handle_'+obj.getAttribute('data-action')](obj);
+	},
 	
 		
 	endof:'Panel'

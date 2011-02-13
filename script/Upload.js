@@ -23,7 +23,6 @@ Upload.prototype.submitted = function () {
 				if (data.error != '') {
 					alert(data.error);
 				} else {
-					$('#upload-file').value('');
 					OSMCZ.changeQuery(data.msg);
 				}
 			}

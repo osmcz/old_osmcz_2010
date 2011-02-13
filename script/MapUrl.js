@@ -10,10 +10,40 @@ MapUrl.prototype.layer = null;
 MapUrl.prototype.loadend = function(){
 	OSMCZ.map.zoomToExtent(this.layer.getDataExtent());
 	//OSMCZ.map.setCenter(this.layer.getDataExtent().getCenterLonLat());
-
-	this.$().append("<p><b>"+this.layer.getDataExtent().toBBOX()+"</b>");
+	
+	var bbox = toLL(this.layer.getDataExtent()).toBBOX();
+	this.$().append("<p><br><b>Ohraničení trasy:</b>"
+			+"<p><a href='#bbox:"+bbox+"' class='osmczlink'>BBOX</a>  <input type='text' value='"+bbox+"' style='font-size:90%' onfocus='this.select()'> <input type='checkbox' data-action='showBbox' class='osmczbutton'>"
+			);
+	
+	
+	for(var i in this.layer.features){
+		var f = this.layer.features[i];
+		var len = f.geometry.getGeodesicLength(OSMCZ.map.projection);
+		
+		this.$().append("<p>Segment"+i+": "+OSMCZ.getInKm(len)); // getProjectionObject()));
+	}
+	//OSMCZ.debug2($.dump());
 	
 }
+MapUrl.prototype.handle_showBbox = function(obj){ //todo: introduce GUI parts - controls
+		if(obj.checked){ //called after the box is checked
+			if(!this.dataBox)
+				this.dataBox = new OpenLayers.Feature.Vector(this.layer.getDataExtent().toGeometry(), {}, {
+					strokeWidth: 2,
+					strokeColor: '#ee9900',
+					fill: false
+				});
+			
+			OSMCZ.boxesLayer.addFeatures(this.dataBox);
+		}
+		else {
+			OSMCZ.boxesLayer.removeFeatures(this.dataBox);
+		}
+		return true;
+}
+
+
 MapUrl.prototype.setData = function(data){
 	this.Panel.setData.call(this, data);    // Call super-class method (if desired)
 	//this.data = data;
@@ -43,7 +73,7 @@ MapUrl.prototype.setData = function(data){
             //eventListeners: { 'loadend': function(){ OSMCZ.map.zoomToExtent(fromLL(this.getDataExtent()))  }},
             protocol: new OpenLayers.Protocol.HTTP({
                 url: data,
-                format: new OpenLayers.Format.KML({
+                format: new OpenLayers.Format.GPX({
                     extractStyles: true, 
                     extractAttributes: true,
                     maxDepth: 2
@@ -77,6 +107,10 @@ MapUrl.prototype.setData = function(data){
 
 }
 
+
+
+
+
 MapUrl.parseQuery = function (query){ //static function
 		if(query.substr(0,7) == "http://") return query;
 		return false;
@@ -84,5 +118,9 @@ MapUrl.parseQuery = function (query){ //static function
 MapUrl.buildQuery = function (data){
 	return data;
 }
+
+
+
+
 
 
