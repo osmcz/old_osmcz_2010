@@ -1,0 +1,132 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link rel="stylesheet" href="lib/ol/theme/default/style.css" type="text/css" />
+
+    <script src="lib/ol/OpenLayers.js"></script>
+<script type="text/javascript">
+var map, layer, xxx=0;
+
+var cache = {}
+
+
+function init(){
+		map = new OpenLayers.Map('map',{
+			units: 'm',
+			projection: new OpenLayers.Projection("EPSG:900913"), //v metrech pro mercatora
+			displayProjection: new OpenLayers.Projection("EPSG:4326"), //latlon
+			controls:[
+				new OpenLayers.Control.Navigation(),
+				new OpenLayers.Control.PanZoomBar(),
+				new OpenLayers.Control.LayerSwitcher(),
+				new OpenLayers.Control.Attribution(),
+				new OpenLayers.Control.Permalink(),
+				new OpenLayers.Control.ScaleLine(),
+				new OpenLayers.Control.OverviewMap(),
+				new OpenLayers.Control.MousePosition()]
+		});
+
+
+    var hackedLayer = new OpenLayers.Layer.WMS("UHUL", "http://www.localhost/osmcz/proxy.php/http://geoportal2.uhul.cz/wms_oprl/", 
+		{
+			layers: 'Ortofoto_cb'
+		},
+		{
+			attribution: "&copy; 2000 <a href='http://www.uhul.cz/'>ÚHUL</a>",
+			isBaseLayer: true,
+ 			maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+ 			maxResolution: 156543.0339,
+ 			numZoomLevels: 20,
+			units: "m",
+			projection: "EPSG:4326"
+		});
+		
+		hackedLayer.getFullRequestString = function(newParams, altUrl) {
+			this.params.SRS = "EPSG:4326";
+      return OpenLayers.Layer.Grid.prototype.getFullRequestString.apply(this, arguments);
+		}
+		hackedLayer.getURL = function(bounds){  //this solution too slow, must be cached (cache could grow too biggg!)
+			var id = bounds.toBBOX();
+			if(!cache[id])
+		  	cache[id] = toLL(bounds.clone());
+			return OpenLayers.Layer.WMS.prototype.getURL.apply(this, [ cache[id] ]);			
+		}
+	  //document.getElementById('docs').innerHTML = ""+bounds.left+""+bounds.top
+		map.addLayer(hackedLayer);
+
+
+		//Mapnik layer
+		map.addLayer(new OpenLayers.Layer.OSM("Mapnik", null, {
+			isBaseLayer: false,
+			opacity: 0.4
+			}));
+
+
+
+
+		//CUZK
+    var hackedLayer = new OpenLayers.Layer.WMS("CUZK", "http://wms.cuzk.cz/wms.asp", 
+		{
+			layers: 'prehledka_kat_uz,prehledka_kraju-linie',
+ 			transparent: true
+		},
+		{
+			attribution: "&copy; 2011 <a href='http://www.cuzk.cz/'>ČÚZK</a>",
+			isBaseLayer: false,
+			visible: false,
+ 			maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+ 			maxResolution: 156543.0339,
+ 			numZoomLevels: 20,
+			units: "m",
+			projection: "EPSG:4326"
+		});
+		hackedLayer.getFullRequestString = function(newParams, altUrl) {
+			this.params.SRS = "EPSG:4326";
+      return OpenLayers.Layer.Grid.prototype.getFullRequestString.apply(this, arguments);
+		}
+		hackedLayer.getURL = function(bounds){  //this solution too slow, must be cached (cache could grow too biggg!)
+			var id = bounds.toBBOX();
+			if(!cache[id])
+		  	cache[id] = toLL(bounds.clone());
+			return OpenLayers.Layer.WMS.prototype.getURL.apply(this, [ cache[id] ]);			
+		}
+	  //document.getElementById('docs').innerHTML = ""+bounds.left+""+bounds.top
+		map.addLayer(hackedLayer);
+
+
+
+
+
+		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
+		//map.setCenter( new OpenLayers.LonLat(14.3, 50.1), 			14);
+		
+}
+        
+
+
+function toLL(obj){return obj.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));}
+function fromLL(obj){return obj.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));}
+
+
+    </script>
+  </head>
+  <body onload="init()">
+    <h1 id="title">WMS Example</h1>
+
+    <div id="tags">
+    </div>
+    <p id="shortdesc">
+        Shows the basic use of openlayers using a WMS layer
+    </p>
+
+    <div id="map" class="smallmap" style="width:400px;height:400px"></div>
+
+    <div id="docs">
+        This is an example of how to add an WMS layer to the OpenLayers window. The images are tiled in this instance if you wanted to not use a tiled WMS
+        please use this example and pass the option ‘singleTile’ as true.
+    </div>
+  </body>
+</html>
+
+
+
+
