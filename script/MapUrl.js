@@ -21,7 +21,7 @@ MapUrl.prototype.loadend = function(){
 		var f = this.layer.features[i];
 		var len = f.geometry.getGeodesicLength(OSMCZ.map.projection);
 		
-		this.$().append("<p>Segment"+i+": "+OSMCZ.getInKm(len)); // getProjectionObject()));
+		this.$().append("<p>Segment"+i+": "+OSMCZ.getInKm(len));
 	}
 	//OSMCZ.debug2($.dump());
 	

@@ -163,8 +163,8 @@ p {margin: 0;}
 }
 .leftpanel_toggled .leftpanel {display:none}
 .leftpanel_toggled .middlepanel {margin-left:0}
-.rightpanel_toggled .rightpanel {width: 200px}
-.rightpanel_toggled .middlepanel {margin-right:200px}
+.rightpanel_toggled .rightpanel {width: 162px}
+.rightpanel_toggled .middlepanel {margin-right:162px}
 /* </main> */
 
 
@@ -267,14 +267,63 @@ p.spacer {margin-top: 1em;}
 
 
 .panel .nowrap li {white-space: nowrap;}
-span.osmczbutton {color: blue; text-decoration: underline; cursor: pointer; _cursor: hand;} /*jako odkazy*/
-span.osmczbutton:hover {text-decoration: none}
+span.osmczbutton, span.likea {color: blue; text-decoration: underline; cursor: pointer; _cursor: hand;} /*jako odkazy*/
+span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 
-a[href^="http:"] {
-	background: url(icon_external_site.gif) no-repeat right center;
-	padding: 0 13px 0 0;
+.panel a[href^="http:"] {
+	background: url(icon_external_site.gif) no-repeat right 30%;
+	padding: 0 7px 0 0;
 } 
 
 
 
+
+.layer-button {
+	height: 20px;
+	background: url(map/no.png) no-repeat center 2px;
+	cursor: pointer; _cursor: hand;
+}
+.rightpanel_toggled .layer-button {
+	float:left;
+	width: 54px;
+	height: 54px;
+}
+.layer-button small {
+	display: block;
+	float:left;
+	text-align: center;
+	line-height: 12px;
+	margin-top: 2px;
+	padding: 3px 4px 3px 8px;
+	background: rgba(255,255,255,0.8);
+	color: #000;
+}
+.layer-button.active {background-color: #90d55d; height: 54px;}
+/*.rightpanel_toggled .layer-button.active small {background: none;}*/
+.layer-button.active small {background: rgba(227,245,213,0.8);}
+
+
+#layer-info {
+	display: none;
+	position: absolute;
+	right: 60px;
+	top: 0;
+	width: 200px; 
+	border: 1px #A5DD77 solid;
+	padding: 0.4em;
+	font-size: 90%;
+	line-height: 1.5;
+	background: #fff;
+	z-index: 2000; /*OL controls starts at 1000*/
+	cursor: default;
+}
+#layer-info p {margin-top: 0.4em;}
+#layer-info p.attr  {
+	margin-top: 0;
+	font-size: 80%;
+	color: gray;
+	padding-left: 20px;
+}
+#layer-info .attr a {color: gray}
+#layer-info big {font-weight: bold}
 

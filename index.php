@@ -57,6 +57,7 @@
 	<div class="middlepanel">
 		<a href="#no" id="leftpanel_toggle" title="vysunout/zasunout levý panel">&laquo;</a>
 		<div class="aright">
+			<span class='likea' onclick='if(navigator.geolocation)navigator.geolocation.getCurrentPosition(function(position){OSMCZ.map.setCenter(fromLL(new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude)), 16);});'>locate me</span> &#149;
 			<a href="#osmdata:14.298938,50.093561,14.301845,50.096507" class="osmczlink">osmdata</a> &#149;
 			<a href="#print" class="osmczlink">tisk</a> &#149;
 			<a href="#export" class="osmczlink">export</a> &#149; 
@@ -70,13 +71,14 @@
 	<div class="leftpanel" id='js-panelsContainer'>
 		
 		<div id='home' class='panel'>
-			<!-- <p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Z projektu, který nabízí zdarma a bez omezení mapová data podobně jako Wikipedia encyklopedii.
+			<p>Tento mapový portál se zaměřuje především na různé využítí map z <a href=''>OpenStreetMap</a>. Z projektu, který nabízí zdarma a bez omezení mapová data podobně jako Wikipedia encyklopedii.
 			<ul>
 			 <li><a href="">poradna</a></li>
 			 <li><a href="">využití dat</a></li>
 			 <li><a href="">jak přispět</a></li>
 			</ul>
-			-->
+			
+<!-- 
 <p>&lt;Routing> &lt;OsmData> 
 	&lt;Coords>
 &lt;Address>
@@ -84,6 +86,8 @@
 &lt;MapUrl> 
 <p>RoutingForm Summary Upload WebPage
 <p>ExportMap MapUrl OsmData Permalink Print Home
+
+			-->
 
 <p>* Mapnik<br>
 * Osmarender<br>
@@ -96,8 +100,6 @@
 * tiles (MapSurfer, CM, MQ)<br>
 * GMap/Sat<br>
 * Cenia,Uhul,KM<br>
-
-
 
 
 	
@@ -166,19 +168,111 @@
 		
 	</div><!-- /js-panelsContainer -->
 	
-	<div class="rightpanel">
+	<div class="rightpanel" id='js-layerSwitcher'>
 	
-	<div class="maplayer">
-	<img src="etc/osm_mag_30.png" width="16" height="16"><br>
+	<div class="layer-button" style='background-image:url(etc/map/mapnik.png);'>
 	<small>Mapnik</small>
 	</div>
 
-	<div class="mapsource">
-	<img src="etc/osm_mag_30.png" width="40" height="40"><br>
-	<small>Osmarender</small>
+	<div class="layer-button" style='background-image:url(etc/map/osma.png);'>
+	<small>T@H</small>
 	</div>
 
+	<div class="layer-button" style='background-image:url(etc/map/uhul.png);'>
+	<small>ÚHUL</small>
 	</div>
+
+	<div class="layer-button" style='background-image:url(etc/map/otm.png);'>
+	<small>OTM</small>
+	</div>
+
+	
+	<script type="text/javascript">
+ <!--
+
+layerInfo = [
+{
+	name_short: 'Mapnik',
+	html: "<big>Main Mapnik</big>"
+		+ "<p><img src='etc/map/world.png'> 10 minut"
+		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
+		+ "<p><a href='http://wiki.osm.org/wiki/Mapnik'>wiki</a> ~ <a href='http://www.mapnik.org/'>mapnik.org</a>",
+	layer: 'x'
+},
+{
+	name_short: 'T@H',
+	html: "<big>Osmarender</big>"
+		+ "<p><img src='etc/map/world.png'> 10 minut"
+		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
+		+ "<p><a href='http://wiki.osm.org/wiki/Osmarender'>wiki</a> ~ <a href='http://www.informationfreeway.org/'>Tiles @ Home</a>",
+	layer: 'x'
+},
+{
+	name_short: 'ÚHUL',
+	html: "<big>ÚHUL Ortofoto</big>"
+		+ "<p><img src='etc/map/cr.png'> bez aktualizace"
+		+ "<p class='attr'>&copy; <a href='http://www.uhul.cz/'>ÚHUL</a> 2001"
+		+ "<p><a href='http://wiki.osm.org/wiki/WikiProject_Czechia/freemap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a>",
+	layer: 'x'
+},
+{
+	name_short: 'OTM',
+	html: "<big>OpenTrackMap.no-ip.org</big>"
+		+ "<p><img src='etc/map/cr.png'> občas - 23.1."
+		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
+		+ "<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>",
+	layer: 'x'	
+},
+]
+
+$('#js-layerSwitcher').sortable().disableSelection();
+
+function showTooltip(objButton){
+	var name_short = $(objButton).find('small').html();
+	for(i in layerInfo){
+		if (name_short == layerInfo[i].name_short){
+			
+			$('#layer-info')
+				.appendTo(objButton)
+				.css({
+					top: $(objButton).position().top,
+					left: $(objButton).position().left-211,
+					})
+				.show()
+				.html(layerInfo[i].html);
+			
+		}
+	}	
+}
+
+var tooltipTimeout = null;
+$('.layer-button').hover(function(e){
+	var objButton = this;
+	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
+		showTooltip(objButton);
+	}, 1000);
+
+	$(this).addClass('active'); //add .active
+}, function(){
+	window.clearTimeout(tooltipTimeout); //cancel timeout or hide already shown tooltip
+	$('#layer-info').hide();
+
+	$('.layer-button.active').removeClass('active'); //remove .active
+});
+
+ //-->
+ </script>
+
+
+	</div><!-- js-layerswitcher -->
+	
+	<div id="layer-info">
+	<big>OpenTrackMap.no-ip.org</big>
+	<p><img src='etc/map/cr.png'> občas - 23.1.
+	<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>
+	<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>
+	</div>
+	
 	
 	<div class="middlepanel"><div id="map"><noscript>CHYBA: Máte vypnutý JavaScript a bez něj to bohužel nepůjde :-)</noscript></div></div>
 		
