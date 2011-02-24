@@ -166,66 +166,251 @@
 		</div>	
 		
 		
-	</div><!-- /js-panelsContainer -->
+	</div><!-- /#js-panelsContainer  /.leftpanel -->
 	
-	<div class="rightpanel" id='js-layerSwitcher'>
+	<div class="rightpanel">		
+		<div id='allmenu'><div id='allmenu-types'></div>&nbsp;&laquo; ALL</div>
+		<div id='js-layerSwitcher'></div>
+	</div><!-- /rightpanel -->
 	
-	<div class="layer-button" style='background-image:url(etc/map/mapnik.png);'>
-	<small>Mapnik</small>
+	<div id="layer-info">
+		<big>OpenTrackMap.no-ip.org</big>
+		<p><img src='etc/map/cr.png'> občas - 23.1.
+		<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>
+		<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>
 	</div>
 
-	<div class="layer-button" style='background-image:url(etc/map/osma.png);'>
-	<small>T@H</small>
-	</div>
-
-	<div class="layer-button" style='background-image:url(etc/map/uhul.png);'>
-	<small>ÚHUL</small>
-	</div>
-
-	<div class="layer-button" style='background-image:url(etc/map/otm.png);'>
-	<small>OTM</small>
-	</div>
-
-	
-	<script type="text/javascript">
- <!--
+<script type="text/javascript">
+<!--
 
 layerInfo = [
 {
 	name_short: 'Mapnik',
+	name_slug: 'mpnk',
+	tags: 'general,_default',
 	html: "<big>Main Mapnik</big>"
 		+ "<p><img src='etc/map/world.png'> 10 minut"
 		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
 		+ "<p><a href='http://wiki.osm.org/wiki/Mapnik'>wiki</a> ~ <a href='http://www.mapnik.org/'>mapnik.org</a>",
-	layer: 'x'
+	isBaseLayer: true,
+	url: 'http://c.tile.openstreetmap.org/${z}/${x}/${y}.png'
 },
 {
 	name_short: 'T@H',
+	name_slug: 'osma',
+	tags: 'general',
 	html: "<big>Osmarender</big>"
 		+ "<p><img src='etc/map/world.png'> 10 minut"
 		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
 		+ "<p><a href='http://wiki.osm.org/wiki/Osmarender'>wiki</a> ~ <a href='http://www.informationfreeway.org/'>Tiles @ Home</a>",
-	layer: 'x'
+	isBaseLayer: true,
+	url: 'http://c.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png'
+},
+{
+	name_short: 'Cycle',
+	name_slug: 'cycle',
+	tags: 'bike,_default',
+	html: "<big>OpenCycleMap</big>"
+		+ "<p><img src='etc/map/world.png'> 1 týden"
+		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
+		+ "<p><a href='http://wiki.osm.org/wiki/OpenCycleMap'>info</a> ~ <a href='http://opencyclemap.org/'>opencyclemap.org</a>",
+	isBaseLayer: true,
+	url: 'http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png'	
 },
 {
 	name_short: 'ÚHUL',
+	name_slug: 'uhul',
+	tags: 'ortofoto,_default',
 	html: "<big>ÚHUL Ortofoto</big>"
 		+ "<p><img src='etc/map/cr.png'> bez aktualizace"
 		+ "<p class='attr'>&copy; <a href='http://www.uhul.cz/'>ÚHUL</a> 2001"
 		+ "<p><a href='http://wiki.osm.org/wiki/WikiProject_Czechia/freemap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a>",
-	layer: 'x'
+	isBaseLayer: true,
+	url: 'http://www.localhost/osmcz/uhul_tile.php/${z}/${x}/${y}.png'
 },
 {
-	name_short: 'OTM',
-	html: "<big>OpenTrackMap.no-ip.org</big>"
+	name_short: 'OTMt',
+	name_slug: 'otmt',
+	tags: 'hike,bike',
+	html: "<big>OpenTrackMap tracks</big>"
 		+ "<p><img src='etc/map/cr.png'> občas - 23.1."
 		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
 		+ "<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>",
-	layer: 'x'	
+	isBaseLayer: false,
+	url: 'http://opentrackmap.no-ip.org/tracks/${z}/${x}/${y}.png'	
 },
-]
+{
+	name_short: 'OTM',
+	name_slug: 'otm',
+	tags: 'hike,bike',
+	html: "<big>OpenTrackMap baked</big>"
+		+ "<p><img src='etc/map/cr.png'> občas - 23.1."
+		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
+		+ "<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>",
+	isBaseLayer: true,
+	url: 'http://opentrackmap.no-ip.org/tiles/${z}/${x}/${y}.png'	
+},
+{
+	name_short: 'ČÚZK',
+	name_slug: 'cuzk',
+	tags: 'other,_default',
+	html: "<big>ČÚZK KM</big>",
+	isBaseLayer: false,
+	url: "http://wms.cuzk.cz/wms.asp",
+	wms_params: {layers: 'DEF_BUDOVY,RST_KN,RST_KMD,RST_PK,obrazy_parcel,hranice_parcel,dalsi_p_mapy,omp,prehledka_kat_uz,prehledka_kraju-linie',transparent: true},
+	wms_layers: {
+		RST_KN: 'rastrové mapy KN (KM-D)',
+		RST_KMD: 'vektorová mapa KN (DKM)',
+		RST_PK: 'mapy pozemkového katastru',
+		dalsi_p_mapy: 'další prvky mapy z DKM',
+		hranice_parcel: 'hranice parcel z DKM',
+		obrazy_parcel: 'obrazy parcel z DKM',
+		omp: 'vektorová složka orientační mapy parcel',
+		DEF_BUDOVY: 'definiční body budov (vč. čísel popisných, červeně)',
+		prehledka_kat_uz: 'hranice katastrálních území',
+		'prehledka_kraju-linie': 'hranice krajů'
+	}//http://wms.cuzk.cz/wms.asp?service=WMS&request=GetCapabilities
+},
+];
+for(var i in layerInfo) $.extend(layerInfo[i], {i:i}); //extend its index
 
-$('#js-layerSwitcher').sortable().disableSelection();
+
+
+/*
+#layerswitch hover
+-> ukázat nastavení (opacita, isBase, layers)
+
+rozdělit basy a overlaye
+-> #js-overlaySwitcher
+
+opravit sortable(), aby po vysortění updatnul zIndex
+
+menu víc přes JS timeout, aby chvilkové vyjetí menu nezavřelo
+
+
+
+
+*/
+
+// compute all tags
+var tagIndex = {
+	all: layerInfo,
+	general: [],
+	hike: [],
+	bike: [],
+	ski: [],
+	ortofoto: [],
+	other: [],
+	google: [],
+	_default: []
+};
+for(i in layerInfo){
+	var tags = layerInfo[i].tags.split(',');
+	for(t in tags){
+		if(!tagIndex[tags[t]]) tagIndex[tags[t]] = [];
+		tagIndex[tags[t]].push(layerInfo[i]);
+	}
+}
+
+
+// inject types in #allmenu-types (All, Genral, ...)
+function ucfirst(s){return s[0].toUpperCase()+s.substr(1)}
+var html = '';
+for(tag in tagIndex)
+	if(tag[0] != '_')
+		html += '<div class="type" data-tag="'+tag+'">'+ucfirst(tag)+' <small>('+tagIndex[tag].length+')</small></div>';
+$('#allmenu-types').append(html)
+
+
+//fill default layer switcher
+$('#js-layerSwitcher')
+	.sortable()
+	.disableSelection()
+	//.append(getLayerButtons(tagIndex['_default']));
+
+//inject layer-buttons in each .type
+$('#allmenu-types')
+	.find('.type')
+	.each(function(i){
+		var tag = $(this).attr('data-tag');
+		var layers = (tag=='all') ? layerInfo : tagIndex[tag];
+		
+		var cols = Math.ceil(layers.length / 5);
+		var rows = (cols>1) ? Math.ceil(layers.length / cols) : layers.length; 
+		var style = (!i ? 'border-top:0;' : '')	+ 'width:'+(cols*54)+'px; height:'+(rows*54)+'px';
+		$(this).prepend("<div class='submenu' style='"+style+"'>"+getLayerButtons(layers)+"</div>");
+	});
+
+
+
+
+function addLayer(l){
+	if(l.wms_params){ //přidej WMSko
+		l.layer = new OpenLayers.Layer.WMS.LL(l.name_short, l.url, l.wms_params, {isBaseLayer: l.isBaseLayer});
+	}
+	else { //přidej XYZ vrstvu
+		l.layer = new OpenLayers.Layer.OSM(l.name_short, l.url, {isBaseLayer: l.isBaseLayer});
+	}
+	
+	OSMCZ.map.addLayer(l.layer);
+	if(l.isBaseLayer)
+		OSMCZ.map.setBaseLayer(l.layer);
+	
+	
+	$(getLayerButtons([l]))
+		.appendTo('#js-layerSwitcher')
+		.hover(layerButtonOver, layerButtonOut)
+		.click(function(e){
+			var l = layerInfo[ $(this).attr('data-i') ];
+			if(l.isBaseLayer){
+				if(OSMCZ.map.baseLayer == l.layer) //clicked the active layer
+					OSMCZ.map.setBaseLayer(OSMCZ.map.layers[0]);
+				else
+					OSMCZ.map.setBaseLayer(l.layer);
+			}
+			else{
+				if(l.layer.getVisibility()){
+					l.layer.setVisibility(false);
+					$(this).find('small').css('text-decoration','line-through');
+				}
+				else {
+					l.layer.setVisibility(true);
+					$(this).find('small').css('text-decoration','none');
+				}
+			}
+		})
+}
+
+
+
+
+function getLayerButtons(layerArray){
+	var htmlTemplate = '<div class="layer-button" data-i="${i}" style="background-image:url(etc/map/${name_slug}.png);"><small>${name_short}</small></div>';
+	var html = '';
+	for(var i in layerArray){
+		html += OpenLayers.String.format(htmlTemplate, layerArray[i]);
+	}
+	return html;
+}
+
+
+
+//tooltip systém
+var tooltipTimeout = null;
+var layerButtonOver = function(e){
+	var objButton = this;
+	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
+		showTooltip(objButton);
+	}, 1000);
+
+	$(this).addClass('active'); //add .active
+}
+var layerButtonOut = function(e){
+	window.clearTimeout(tooltipTimeout); //cancel timeout or hide already shown tooltip
+	$('#layer-info').hide();
+
+	$('.layer-button.active').removeClass('active'); //remove .active
+}
 
 function showTooltip(objButton){
 	var name_short = $(objButton).find('small').html();
@@ -245,33 +430,24 @@ function showTooltip(objButton){
 	}	
 }
 
-var tooltipTimeout = null;
-$('.layer-button').hover(function(e){
-	var objButton = this;
-	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
-		showTooltip(objButton);
-	}, 1000);
-
-	$(this).addClass('active'); //add .active
-}, function(){
-	window.clearTimeout(tooltipTimeout); //cancel timeout or hide already shown tooltip
-	$('#layer-info').hide();
-
-	$('.layer-button.active').removeClass('active'); //remove .active
-});
-
- //-->
- </script>
 
 
-	</div><!-- js-layerswitcher -->
+
+//zpracvoání hoverů a clicků
+$('.layer-button')
+	.hover(layerButtonOver, layerButtonOut)
+	.click(function(){
+		var idx = $(this).attr('data-i');
+		addLayer(layerInfo[idx]);
+	})
 	
-	<div id="layer-info">
-	<big>OpenTrackMap.no-ip.org</big>
-	<p><img src='etc/map/cr.png'> občas - 23.1.
-	<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>
-	<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>
-	</div>
+
+/*
+javascript:var a=document.getElementsByTagName('a');for(var i in a)if(a[i].href.indexOf('redir=sezn_ucit') > 1){var img=document.createElement('img');img.src=a[i].href.replace('redir=sezn_ucit','do=foto').replace('redir.php','');a[i].appendChild(img);}void(0); 
+*/
+
+//-->
+</script>
 	
 	
 	<div class="middlepanel"><div id="map"><noscript>CHYBA: Máte vypnutý JavaScript a bez něj to bohužel nepůjde :-)</noscript></div></div>

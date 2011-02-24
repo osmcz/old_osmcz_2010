@@ -279,14 +279,10 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 
 
 .layer-button {
-	height: 20px;
-	background: url(map/no.png) no-repeat center 2px;
-	cursor: pointer; _cursor: hand;
-}
-.rightpanel_toggled .layer-button {
-	float:left;
-	width: 54px;
 	height: 54px;
+	overflow: hidden;
+	background: url() no-repeat center 2px;
+	cursor: pointer; _cursor: hand;
 }
 .layer-button small {
 	display: block;
@@ -314,7 +310,7 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 	font-size: 90%;
 	line-height: 1.5;
 	background: #fff;
-	z-index: 2000; /*OL controls starts at 1000*/
+	z-index: 2001; /*OL controls starts at 1000*/
 	cursor: default;
 }
 #layer-info p {margin-top: 0.4em;}
@@ -326,4 +322,54 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 }
 #layer-info .attr a {color: gray}
 #layer-info big {font-weight: bold}
+
+
+
+#allmenu {
+	line-height: 2.1;
+
+}
+#allmenu:hover {
+	background-color: #90d55d;
+}
+#allmenu-types {
+	display: none;
+	width: 100px;
+	position: absolute;
+	right: 60px;
+	
+	border: 1px #A5DD77 solid;
+	border-top: 0;
+	background: #fff;
+	z-index: 2000; /*OL controls starts at 1000*/
+}
+#allmenu:hover #allmenu-types {
+	display: block;
+}
+#allmenu-types .type {
+	padding: 0 0.3em;
+	cursor: pointer;
+}
+
+#allmenu-types .submenu {
+	display: none;
+	position: absolute;
+	right: 100px;
+	width: 54px;
+	height: 54px;
+	
+	border: 1px #A5DD77 solid;
+	background: #fff;
+	z-index: 2000; /*OL controls starts at 1000*/
+}
+#allmenu-types .type:hover {background: #90d55d;}
+#allmenu-types .type:hover .submenu {display: block;}
+#allmenu-types .submenu .layer-button {
+	float: left;
+	width: 54px;
+	height: 54px;
+}
+
+	
+
 

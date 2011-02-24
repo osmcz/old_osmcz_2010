@@ -36,15 +36,6 @@ var OSMCZ = {
 				new OpenLayers.Control.MousePosition()]
 		});
 
-		//Mapnik layer
-		map.addLayer(new OpenLayers.Layer.OSM("Mapnik"));
-		map.addLayer(new OpenLayers.Layer.OSM("Osma", "http://b.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png"));
-		
-		map.addLayer(new OpenLayers.Layer.OSM("ÚHUL", "http://down.zby.cz/uhul_tile.php/${z}/${x}/${y}.png", {
-			attribution: "&copy; 2000 <a href='http://www.uhul.cz/'>ÚHUL</a>"
-			}));
-
-		
 		//blank layer - same projection as Mapnik
     map.addLayer(new OpenLayers.Layer("Blank",{
 			isBaseLayer: true,
@@ -59,7 +50,7 @@ var OSMCZ = {
 			units: "m",
 			projection: "EPSG:900913"
 		}));
-		
+
 		//vector layer for dataBoxes and boxSelector
 		OSMCZ.boxesLayer = new OpenLayers.Layer.Vector("Boxes");
     OSMCZ.map.addLayer(OSMCZ.boxesLayer);
