@@ -183,139 +183,57 @@
 <script type="text/javascript">
 <!--
 
-layerInfo = [
-{
-	name_short: 'Mapnik',
-	name_slug: 'mpnk',
-	tags: 'general,_default',
-	html: "<big>Main Mapnik</big>"
-		+ "<p><img src='etc/map/world.png'> 10 minut"
-		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
-		+ "<p><a href='http://wiki.osm.org/wiki/Mapnik'>wiki</a> ~ <a href='http://www.mapnik.org/'>mapnik.org</a>",
-	isBaseLayer: true,
-	url: 'http://c.tile.openstreetmap.org/${z}/${x}/${y}.png'
-},
-{
-	name_short: 'T@H',
-	name_slug: 'osma',
-	tags: 'general',
-	html: "<big>Osmarender</big>"
-		+ "<p><img src='etc/map/world.png'> 10 minut"
-		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
-		+ "<p><a href='http://wiki.osm.org/wiki/Osmarender'>wiki</a> ~ <a href='http://www.informationfreeway.org/'>Tiles @ Home</a>",
-	isBaseLayer: true,
-	url: 'http://c.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png'
-},
-{
-	name_short: 'Cycle',
-	name_slug: 'cycle',
-	tags: 'bike,_default',
-	html: "<big>OpenCycleMap</big>"
-		+ "<p><img src='etc/map/world.png'> 1 týden"
-		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
-		+ "<p><a href='http://wiki.osm.org/wiki/OpenCycleMap'>info</a> ~ <a href='http://opencyclemap.org/'>opencyclemap.org</a>",
-	isBaseLayer: true,
-	url: 'http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png'	
-},
-{
-	name_short: 'ÚHUL',
-	name_slug: 'uhul',
-	tags: 'ortofoto,_default',
-	html: "<big>ÚHUL Ortofoto</big>"
-		+ "<p><img src='etc/map/cr.png'> bez aktualizace"
-		+ "<p class='attr'>&copy; <a href='http://www.uhul.cz/'>ÚHUL</a> 2001"
-		+ "<p><a href='http://wiki.osm.org/wiki/WikiProject_Czechia/freemap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a>",
-	isBaseLayer: true,
-	url: 'http://www.localhost/osmcz/uhul_tile.php/${z}/${x}/${y}.png'
-},
-{
-	name_short: 'OTMt',
-	name_slug: 'otmt',
-	tags: 'hike,bike',
-	html: "<big>OpenTrackMap tracks</big>"
-		+ "<p><img src='etc/map/cr.png'> občas - 23.1."
-		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
-		+ "<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>",
-	isBaseLayer: false,
-	url: 'http://opentrackmap.no-ip.org/tracks/${z}/${x}/${y}.png'	
-},
-{
-	name_short: 'OTM',
-	name_slug: 'otm',
-	tags: 'hike,bike',
-	html: "<big>OpenTrackMap baked</big>"
-		+ "<p><img src='etc/map/cr.png'> občas - 23.1."
-		+ "<p class='attr'>cc-by-sa <a href='http://www.openstreetmap.org/'>OSM</a>"
-		+ "<p><a href='http://wiki.osm.org/wiki/OpenTrackMap'>info</a> ~ <a href='http://opentrackmap.no-ip.org/'>www</a> ~ <a href='http://blackhex.no-ip.org/'>Radek Bartoň</a>",
-	isBaseLayer: true,
-	url: 'http://opentrackmap.no-ip.org/tiles/${z}/${x}/${y}.png'	
-},
-{
-	name_short: 'ČÚZK',
-	name_slug: 'cuzk',
-	tags: 'other',
-	html: "<big>ČÚZK KM</big>",
-	isBaseLayer: false,
-	url: "http://wms.cuzk.cz/wms.asp",
-	wms_params: {layers: 'RST_KN,RST_KMD,RST_PK,obrazy_parcel,hranice_parcel,dalsi_p_mapy,omp,prehledka_kat_uz,prehledka_kraju-linie',transparent: true},
-	wms_layers: {
-		RST_KN_I: 'rastrové mapy KN inverzní (KM-D)',
-		RST_KN: 'rastrové mapy KN (KM-D)',
-		RST_KMD: 'vektorová mapa KN (DKM)',
-		RST_PK: 'mapy pozemkového katastru',
-		dalsi_p_mapy: 'další prvky mapy z DKM',
-		hranice_parcel: 'hranice parcel z DKM',
-		obrazy_parcel: 'obrazy parcel z DKM',
-		omp: 'vektorová složka orientační mapy parcel',
-		DEF_BUDOVY: 'definiční body budov (vč. čísel popisných, červeně)',
-		prehledka_kat_uz: 'hranice katastrálních území',
-		'prehledka_kraju-linie': 'hranice krajů'
-	}//http://wms.cuzk.cz/wms.asp?service=WMS&request=GetCapabilities
-},
-];
+layerInfo = {
+<?php
 
-// new OpenLayers.Layer.OSM("OpenPisteMap", "http://tiles.openpistemap.org/contours/", {type: 'png', getURL: getTileURL}));
-// new OpenLayers.Layer.OSM("maps.refuges.info", "http://maps.refuges.info/tiles/renderer.py/hiking/", {type: 'jpg', getURL: getTileURL}));
-// new OpenLayers.Layer.Google("Google Satellite/Aerial", {type: G_SATELLITE_MAP, numZoomLevels: 22}));
-// new OpenLayers.Layer.OSM("Topo", "http://topo.openstreetmap.de/topo/", {getURL: getTileURL}));
-// 
-// new OpenLayers.Layer.OSM("Contour Lines", "contours/", {type: 'png', numZoomLevels: 18, getURL: getTileURL}));
-// new OpenLayers.Layer.OSM("Hillshade", "hillshade/", {type: 'png', numZoomLevels: 18, getURL: getTileURL}));
-// overlay_layers[overlay_layers.length - 1].setOpacity(0.6);
-// new OpenLayers.Layer.OSM("Hiking Tracks", "tracks/", {type: 'png', numZoomLevels: 19, getURL: getTileURL}));
-// new OpenLayers.Layer.OSM("Hiking Tracks Debug", "tracks-debug/", {type: 'png', numZoomLevels: 19, getURL: getTileURL}));
-// overlay_layers[overlay_layers.length - 1].visibility = false;
-// new OpenLayers.Layer.OSM("OSMC Reit & Wanderkarte", "http://topo.openstreetmap.de/topo/", {type : 'png', getURL: getTileURL}));
-// overlay_layers[overlay_layers.length - 1].visibility = false;
-// new OpenLayers.Layer.OSM("Lonvia's Hiking Map", "http://osm.lonvia.de/hiking/", {type : 'png', getURL: getTileURL}));
-// overlay_layers[overlay_layers.length - 1].visibility = false;
-
-
-
-
-for(var i in layerInfo) $.extend(layerInfo[i], {i:i}); //extend its index
-
+	mysql_connect("localhost", "root", "") or die("Could not connect to db");
+	mysql_select_db("test") or die("Could not select db");
+	mysql_query("SET CHARACTER SET 'utf8'");
+	$result = mysql_query("select * from osmcz_layers order by `order`");
+	$out = "";
+	while($r = mysql_fetch_assoc($result)){
+		//url expanding
+		$url = "'$r[url]'";
+		if(preg_match('~\[([^\]]+)\]~', $r['url'], $matches)){
+			$arr = array();
+			foreach(explode(',', $matches[1]) as $s)
+				$arr[] = preg_replace('~\[([^\]]+)\]~', $s, $r['url']);
+			$url = "['".implode("','", $arr)."']";
+		}
+		
+		$out .= "$r[id]: {
+			id: '$r[id]',
+			name: '$r[name]',
+			url: $url,
+			tags: '$r[tags]',
+			isBaseLayer: $r[isBaseLayer],
+			opacity: $r[opacity],
+			html: \"" . str_replace(array('"',"\n","\r"),array('\\"',"\\n",""), $r['html']) . '"';
+		if($r['wms_params'])
+			$out .= ",\nwms_params: $r[wms_params]";
+		if($r['wms_layers'])
+			$out .= ",\nwms_layers: $r[wms_layers]";
+		$out .= "\n},\n";
+	}
+	echo substr($out,0,-2);
+	
+?>
+};
+var layerInfoLength = <?php echo mysql_num_rows($result); ?>;
 
 
 /*
-#layerswitch hover
--> ukázat nastavení (opacita, isBase, layers)
-
 rozdělit basy a overlaye
 -> #js-overlaySwitcher
 
 opravit sortable(), aby po vysortění updatnul zIndex
 
 menu víc přes JS timeout, aby chvilkové vyjetí menu nezavřelo
-
-
-
-
 */
 
 // compute all tags
 var tagIndex = {
-	all: layerInfo,
+	all: [],
 	general: [],
 	hike: [],
 	bike: [],
@@ -325,13 +243,15 @@ var tagIndex = {
 	google: [],
 	_default: []
 };
-for(i in layerInfo){
+for(var i in layerInfo){
 	var tags = layerInfo[i].tags.split(',');
 	for(t in tags){
 		if(!tagIndex[tags[t]]) tagIndex[tags[t]] = [];
 		tagIndex[tags[t]].push(layerInfo[i]);
 	}
+	tagIndex.all.push(layerInfo[i]);
 }
+
 
 
 // inject types in #allmenu-types (All, Genral, ...)
@@ -340,18 +260,20 @@ var html = '';
 for(tag in tagIndex)
 	if(tag[0] != '_')
 		html += '<div class="type" data-tag="'+tag+'">'+ucfirst(tag)+' <small>('+tagIndex[tag].length+')</small></div>';
+
 $('#allmenu-types').append(html)
 
 
-//inject layer-buttons in each .type
+//inject .layer-buttons in each .type
 $('#allmenu-types')
 	.find('.type')
 	.each(function(i){
 		var tag = $(this).attr('data-tag');
-		var layers = (tag=='all') ? layerInfo : tagIndex[tag];
+		var layers = tagIndex[tag];
 		
-		var cols = Math.ceil(layers.length / 5);
-		var rows = (cols>1) ? Math.ceil(layers.length / cols) : layers.length; 
+		var cols = Math.round(Math.sqrt(layers.length));
+		var rows = Math.ceil(layers.length / cols);
+ 
 		var style = (!i ? 'border-top:0;' : '')	+ 'width:'+(cols*54)+'px; height:'+(rows*54)+'px';
 		$(this).prepend("<div class='submenu' style='"+style+"'>"+getLayerButtons(layers)+"</div>");
 	});
@@ -359,21 +281,33 @@ $('#allmenu-types')
 
 //fill default layer switcher
 $('#js-layerSwitcher')
-	.sortable()
-	//.disableSelection()
-	//.append(getLayerButtons());
+	.sortable()//.disableSelection()
+	
 $(function(){
-	for(var i in tagIndex['_default'])
-		addLayer(tagIndex['_default'][i]);
-	OSMCZ.map.setBaseLayer(OSMCZ.map.layers[2]);
+	//for(var i in tagIndex['_default']) addLayer(tagIndex['_default'][i]);
+	//addLayer(layerInfo['mpnk']);
+	//OSMCZ.map.setBaseLayer(OSMCZ.map.layers[2]); //todo
 });
 
 function addLayer(l){
+	if(l.layer){
+		alert('Layer already added');
+		return false;	
+	}
+	
 	if(l.wms_params){ //přidej WMSko
-		l.layer = new OpenLayers.Layer.WMS.LL(l.name_short, l.url, l.wms_params, {isBaseLayer: l.isBaseLayer, opacity: 1});
+		l.layer = new OpenLayers.Layer.WMS.LL(l.name, l.url, l.wms_params, {
+			isBaseLayer: l.isBaseLayer,
+			opacity: l.opacity,
+			transitionEffect: 'resize'
+		});
 	}
 	else { //přidej XYZ vrstvu
-		l.layer = new OpenLayers.Layer.OSM(l.name_short, l.url, {isBaseLayer: l.isBaseLayer, opacity: 1});
+		l.layer = new OpenLayers.Layer.OSM(l.name, l.url, {
+			isBaseLayer: l.isBaseLayer,
+			opacity: l.opacity,
+			transitionEffect: 'resize',
+		});
 	}
 	
 	OSMCZ.map.addLayer(l.layer);
@@ -381,23 +315,23 @@ function addLayer(l){
 		OSMCZ.map.setBaseLayer(l.layer);
 	
 	
-	$(getLayerButtons([l]))
+	$(getLayerButtons([l])) //.layer-button
 		.appendTo('#js-layerSwitcher')
 		.addClass('switcher')
 		.hover(layerButtonOver, layerButtonOut)
 		.click(function(e){
-			if(this != e.target) //clicked #layer-info -> continue propagation
+			if(e.target != this && e.target.tagName != 'SMALL') //clicked #layer-info -> skip this function
 				return true;
 			
-			var l = layerInfo[ $(this).attr('data-i') ];
+			var l = layerInfo[ $(this).attr('data-id') ];
 			if(l.isBaseLayer){
-				if(OSMCZ.map.baseLayer == l.layer) //clicked the active layer
+				if(OSMCZ.map.baseLayer == l.layer) //clicked the active layer -> show blank
 					OSMCZ.map.setBaseLayer(OSMCZ.map.layers[0]);
 				else
 					OSMCZ.map.setBaseLayer(l.layer);
 			}
 			else{
-				if(l.layer.getVisibility()){
+				if(l.layer.getVisibility()){ //hide the layer
 					l.layer.setVisibility(false);
 					$(this).addClass('hidden-layer');
 				}
@@ -407,13 +341,14 @@ function addLayer(l){
 				}
 			}
 		})
+		
 }
 
 
 
 
 function getLayerButtons(layerArray){
-	var htmlTemplate = '<div class="layer-button" data-i="${i}" style="background-image:url(etc/map/${name_slug}.png);"><small>${name_short}</small></div>';
+	var htmlTemplate = '<div class="layer-button" data-id="${id}" style="background-image:url(etc/map/${id}.png);"><small>${name}</small></div>';
 	var html = '';
 	for(var i in layerArray){
 		html += OpenLayers.String.format(htmlTemplate, layerArray[i]);
@@ -429,9 +364,9 @@ var layerButtonOver = function(e){
 	var objButton = this;
 	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
 		showTooltip(objButton);
-	}, 300);
+	}, 900);
 
-	$(this).addClass('active'); //add .active
+	$(objButton).addClass('active'); //add .active
 }
 var layerButtonOut = function(e){
 	window.clearTimeout(tooltipTimeout); //cancel timeout or hide already shown tooltip
@@ -441,25 +376,27 @@ var layerButtonOut = function(e){
 }
 
 function showTooltip(objButton){
-	var i = $(objButton).attr('data-i');
+	var l = layerInfo[ $(objButton).attr('data-id') ];
+	
 	var settings = '';
 	if($(objButton).hasClass('switcher')){
 		settings = '<p class="topline"><input type="button" value="odebrat" class="fright">'
-						 + 'Výplň: <input type="text" size="2" value="'+(layerInfo[i].layer.opacity*100*layerInfo[i].layer.getVisibility())+'" title="up/down keys">%'
+						 + 'Výplň: <input type="text" size="2" value="'+(l.layer.opacity*100*l.layer.getVisibility())+'" title="up/down keys">%'
 		
-		if(layerInfo[i].wms_layers){
+		if(l.wms_layers){
 			settings += '<p>WMS: <select multiple="multiple" size="4" style="width:100%"></select>';
 		}
 	}
-	$('#layer-info')
-		.appendTo(objButton)
+	
+	var obj = $('#layer-info');
+	obj.appendTo(objButton) //move
 		.css({
 			top: $(objButton).position().top,
-			left: $(objButton).position().left-211,
+			left: $(objButton).position().left-211, //width of #layer-info
 			})
+		.html(l.html + settings)
 		.show()
-		.html(layerInfo[i].html + settings)
-		.find('input')
+		.find('input[type=text]')
 			.keyup(function(e){
 				var opa = parseInt($(this).val());
 				if(opa > 0 && e.keyCode == 40 ){ //left 37, down 40
@@ -472,47 +409,49 @@ function showTooltip(objButton){
 				}
 				
 				if(opa == 0) //hide
-					layerInfo[i].layer.setVisibility(false);
+					l.layer.setVisibility(false);
 				else
-					layerInfo[i].layer.setVisibility(true);
-					
+					l.layer.setVisibility(true);
 				
-				layerInfo[i].layer.setOpacity(opa/100);
+				l.layer.setOpacity(opa/100);
+			});
+		obj.find('input[type=button]')
+			.click(function(){
+				OSMCZ.map.removeLayer(l.layer);
+				l.layer = null;
+				$(objButton)
+					.mouseleave()
+					.hide(); //todo: why doesnt remove() work here??
 			});
 		
 		
-		
-		if(layerInfo[i].wms_layers){
-			var select = $('#layer-info').find('select');
-			for(var x in layerInfo[i].wms_layers){
-				var a = $('<option/>').html(x).attr('title',layerInfo[i].wms_layers[x]);
+		if(l.wms_layers){
+			var select = obj.find('select');
+			for(var x in l.wms_layers){
+				var a = $('<option/>').html(x).attr('title',l.wms_layers[x]);
 				select.append(a);
 			}
 			select.change(function(){
-				layerInfo[i].layer.params.LAYERS = $(this).val().join(',');
+				l.layer.params.LAYERS = $(this).val().join(',');
 			});
-			select.val(layerInfo[i].layer.params.LAYERS.split(','));
+			select.val(l.layer.params.LAYERS.split(','));
 		}
 }
 
 
 
 
-//zpracvoání hoverů a clicků
+//handle hover and click in submenu
 $('.layer-button')
 	.hover(layerButtonOver, layerButtonOut)
-	.click(function(){
-		var idx = $(this).attr('data-i');
-		addLayer(layerInfo[idx]);
+	.click(function(e){
+		if(e.target != this && e.target.tagName != 'SMALL') return true; //disable this event on #layer-info
+		var id = $(this).attr('data-id');
+		addLayer(layerInfo[id]);
 	})
 
 
 
-
-
-/*
-javascript:var a=document.getElementsByTagName('a');for(var i in a)if(a[i].href.indexOf('redir=sezn_ucit') > 1){var img=document.createElement('img');img.src=a[i].href.replace('redir=sezn_ucit','do=foto').replace('redir.php','');a[i].appendChild(img);}void(0); 
-*/
 
 //-->
 </script>
