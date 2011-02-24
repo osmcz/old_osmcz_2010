@@ -253,12 +253,13 @@ layerInfo = [
 {
 	name_short: 'ČÚZK',
 	name_slug: 'cuzk',
-	tags: 'other,_default',
+	tags: 'other',
 	html: "<big>ČÚZK KM</big>",
 	isBaseLayer: false,
 	url: "http://wms.cuzk.cz/wms.asp",
-	wms_params: {layers: 'DEF_BUDOVY,RST_KN,RST_KMD,RST_PK,obrazy_parcel,hranice_parcel,dalsi_p_mapy,omp,prehledka_kat_uz,prehledka_kraju-linie',transparent: true},
+	wms_params: {layers: 'RST_KN,RST_KMD,RST_PK,obrazy_parcel,hranice_parcel,dalsi_p_mapy,omp,prehledka_kat_uz,prehledka_kraju-linie',transparent: true},
 	wms_layers: {
+		RST_KN_I: 'rastrové mapy KN inverzní (KM-D)',
 		RST_KN: 'rastrové mapy KN (KM-D)',
 		RST_KMD: 'vektorová mapa KN (DKM)',
 		RST_PK: 'mapy pozemkového katastru',
@@ -272,6 +273,26 @@ layerInfo = [
 	}//http://wms.cuzk.cz/wms.asp?service=WMS&request=GetCapabilities
 },
 ];
+
+// new OpenLayers.Layer.OSM("OpenPisteMap", "http://tiles.openpistemap.org/contours/", {type: 'png', getURL: getTileURL}));
+// new OpenLayers.Layer.OSM("maps.refuges.info", "http://maps.refuges.info/tiles/renderer.py/hiking/", {type: 'jpg', getURL: getTileURL}));
+// new OpenLayers.Layer.Google("Google Satellite/Aerial", {type: G_SATELLITE_MAP, numZoomLevels: 22}));
+// new OpenLayers.Layer.OSM("Topo", "http://topo.openstreetmap.de/topo/", {getURL: getTileURL}));
+// 
+// new OpenLayers.Layer.OSM("Contour Lines", "contours/", {type: 'png', numZoomLevels: 18, getURL: getTileURL}));
+// new OpenLayers.Layer.OSM("Hillshade", "hillshade/", {type: 'png', numZoomLevels: 18, getURL: getTileURL}));
+// overlay_layers[overlay_layers.length - 1].setOpacity(0.6);
+// new OpenLayers.Layer.OSM("Hiking Tracks", "tracks/", {type: 'png', numZoomLevels: 19, getURL: getTileURL}));
+// new OpenLayers.Layer.OSM("Hiking Tracks Debug", "tracks-debug/", {type: 'png', numZoomLevels: 19, getURL: getTileURL}));
+// overlay_layers[overlay_layers.length - 1].visibility = false;
+// new OpenLayers.Layer.OSM("OSMC Reit & Wanderkarte", "http://topo.openstreetmap.de/topo/", {type : 'png', getURL: getTileURL}));
+// overlay_layers[overlay_layers.length - 1].visibility = false;
+// new OpenLayers.Layer.OSM("Lonvia's Hiking Map", "http://osm.lonvia.de/hiking/", {type : 'png', getURL: getTileURL}));
+// overlay_layers[overlay_layers.length - 1].visibility = false;
+
+
+
+
 for(var i in layerInfo) $.extend(layerInfo[i], {i:i}); //extend its index
 
 
@@ -322,12 +343,6 @@ for(tag in tagIndex)
 $('#allmenu-types').append(html)
 
 
-//fill default layer switcher
-$('#js-layerSwitcher')
-	.sortable()
-	.disableSelection()
-	//.append(getLayerButtons(tagIndex['_default']));
-
 //inject layer-buttons in each .type
 $('#allmenu-types')
 	.find('.type')
@@ -342,14 +357,23 @@ $('#allmenu-types')
 	});
 
 
-
+//fill default layer switcher
+$('#js-layerSwitcher')
+	.sortable()
+	//.disableSelection()
+	//.append(getLayerButtons());
+$(function(){
+	for(var i in tagIndex['_default'])
+		addLayer(tagIndex['_default'][i]);
+	OSMCZ.map.setBaseLayer(OSMCZ.map.layers[2]);
+});
 
 function addLayer(l){
 	if(l.wms_params){ //přidej WMSko
-		l.layer = new OpenLayers.Layer.WMS.LL(l.name_short, l.url, l.wms_params, {isBaseLayer: l.isBaseLayer});
+		l.layer = new OpenLayers.Layer.WMS.LL(l.name_short, l.url, l.wms_params, {isBaseLayer: l.isBaseLayer, opacity: 1});
 	}
 	else { //přidej XYZ vrstvu
-		l.layer = new OpenLayers.Layer.OSM(l.name_short, l.url, {isBaseLayer: l.isBaseLayer});
+		l.layer = new OpenLayers.Layer.OSM(l.name_short, l.url, {isBaseLayer: l.isBaseLayer, opacity: 1});
 	}
 	
 	OSMCZ.map.addLayer(l.layer);
@@ -359,8 +383,12 @@ function addLayer(l){
 	
 	$(getLayerButtons([l]))
 		.appendTo('#js-layerSwitcher')
+		.addClass('switcher')
 		.hover(layerButtonOver, layerButtonOut)
 		.click(function(e){
+			if(this != e.target) //clicked #layer-info -> continue propagation
+				return true;
+			
 			var l = layerInfo[ $(this).attr('data-i') ];
 			if(l.isBaseLayer){
 				if(OSMCZ.map.baseLayer == l.layer) //clicked the active layer
@@ -371,11 +399,11 @@ function addLayer(l){
 			else{
 				if(l.layer.getVisibility()){
 					l.layer.setVisibility(false);
-					$(this).find('small').css('text-decoration','line-through');
+					$(this).addClass('hidden-layer');
 				}
 				else {
 					l.layer.setVisibility(true);
-					$(this).find('small').css('text-decoration','none');
+					$(this).removeClass('hidden-layer');
 				}
 			}
 		})
@@ -401,7 +429,7 @@ var layerButtonOver = function(e){
 	var objButton = this;
 	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
 		showTooltip(objButton);
-	}, 1000);
+	}, 300);
 
 	$(this).addClass('active'); //add .active
 }
@@ -413,21 +441,58 @@ var layerButtonOut = function(e){
 }
 
 function showTooltip(objButton){
-	var name_short = $(objButton).find('small').html();
-	for(i in layerInfo){
-		if (name_short == layerInfo[i].name_short){
-			
-			$('#layer-info')
-				.appendTo(objButton)
-				.css({
-					top: $(objButton).position().top,
-					left: $(objButton).position().left-211,
-					})
-				.show()
-				.html(layerInfo[i].html);
-			
+	var i = $(objButton).attr('data-i');
+	var settings = '';
+	if($(objButton).hasClass('switcher')){
+		settings = '<p class="topline"><input type="button" value="odebrat" class="fright">'
+						 + 'Výplň: <input type="text" size="2" value="'+(layerInfo[i].layer.opacity*100*layerInfo[i].layer.getVisibility())+'" title="up/down keys">%'
+		
+		if(layerInfo[i].wms_layers){
+			settings += '<p>WMS: <select multiple="multiple" size="4" style="width:100%"></select>';
 		}
-	}	
+	}
+	$('#layer-info')
+		.appendTo(objButton)
+		.css({
+			top: $(objButton).position().top,
+			left: $(objButton).position().left-211,
+			})
+		.show()
+		.html(layerInfo[i].html + settings)
+		.find('input')
+			.keyup(function(e){
+				var opa = parseInt($(this).val());
+				if(opa > 0 && e.keyCode == 40 ){ //left 37, down 40
+					opa = Math.max(opa-10, 0);
+					$(this).val(opa);
+				}
+				else if(opa < 100 && e.keyCode == 38){ //up 38, right 39
+					opa = Math.min(opa+10, 100);
+					$(this).val(opa);
+				}
+				
+				if(opa == 0) //hide
+					layerInfo[i].layer.setVisibility(false);
+				else
+					layerInfo[i].layer.setVisibility(true);
+					
+				
+				layerInfo[i].layer.setOpacity(opa/100);
+			});
+		
+		
+		
+		if(layerInfo[i].wms_layers){
+			var select = $('#layer-info').find('select');
+			for(var x in layerInfo[i].wms_layers){
+				var a = $('<option/>').html(x).attr('title',layerInfo[i].wms_layers[x]);
+				select.append(a);
+			}
+			select.change(function(){
+				layerInfo[i].layer.params.LAYERS = $(this).val().join(',');
+			});
+			select.val(layerInfo[i].layer.params.LAYERS.split(','));
+		}
 }
 
 
@@ -440,7 +505,10 @@ $('.layer-button')
 		var idx = $(this).attr('data-i');
 		addLayer(layerInfo[idx]);
 	})
-	
+
+
+
+
 
 /*
 javascript:var a=document.getElementsByTagName('a');for(var i in a)if(a[i].href.indexOf('redir=sezn_ucit') > 1){var img=document.createElement('img');img.src=a[i].href.replace('redir=sezn_ucit','do=foto').replace('redir.php','');a[i].appendChild(img);}void(0); 

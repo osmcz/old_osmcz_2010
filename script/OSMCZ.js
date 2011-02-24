@@ -32,7 +32,7 @@ var OSMCZ = {
 				new OpenLayers.Control.Attribution(),
 				new OpenLayers.Control.Permalink(),
 				new OpenLayers.Control.ScaleLine(),
-				new OpenLayers.Control.OverviewMap(),
+				//new OpenLayers.Control.OverviewMap({layers: []}),
 				new OpenLayers.Control.MousePosition()]
 		});
 

@@ -297,7 +297,7 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 .layer-button.active {background-color: #90d55d; height: 54px;}
 /*.rightpanel_toggled .layer-button.active small {background: none;}*/
 .layer-button.active small {background: rgba(227,245,213,0.8);}
-
+.layer-button.hidden-layer small {text-decoration: line-through;}
 
 #layer-info {
 	display: none;
@@ -322,6 +322,7 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 }
 #layer-info .attr a {color: gray}
 #layer-info big {font-weight: bold}
+.topline {border-top: 1px #A5DD77 solid; margin-top: 0.4em; padding-top: 0.4em;}
 
 
 
