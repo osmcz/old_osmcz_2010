@@ -294,10 +294,12 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 	background: rgba(255,255,255,0.8);
 	color: #000;
 }
-.layer-button.active {background-color: #90d55d; height: 54px;}
+.layer-button.active, .layer-button:hover {background-color: #90d55d; height: 54px;}
 /*.rightpanel_toggled .layer-button.active small {background: none;}*/
 .layer-button.active small {background: rgba(227,245,213,0.8);}
-.layer-button.hidden-layer small {text-decoration: line-through;}
+.layer-button.layer-disabled small {text-decoration: line-through;}
+.layer-button.layer-out-of-range small {background: rgba(64,64,64,0.8);}
+
 
 #layer-info {
 	display: none;
@@ -322,12 +324,14 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 }
 #layer-info .attr a {color: gray}
 #layer-info big {font-weight: bold}
-.topline {border-top: 1px #A5DD77 solid; margin-top: 0.4em; padding-top: 0.4em;}
+.topline {border-top: 1px #A5DD77 solid;}
+.topline {margin-top: 0.4em; padding-top: 0.4em;}
 
 
 
 #allmenu {
-	line-height: 2.1;
+	line-height: 2;
+	cursor: pointer;
 
 }
 #allmenu:hover {
@@ -349,7 +353,6 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 }
 #allmenu-types .type {
 	padding: 0 0.3em;
-	cursor: pointer;
 }
 
 #allmenu-types .submenu {
@@ -363,7 +366,7 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 	background: #fff;
 	z-index: 2000; /*OL controls starts at 1000*/
 }
-#allmenu-types .type:hover {background: #90d55d;}
+#allmenu-types .type:hover {background: #90d55d; line-height: 4;}
 #allmenu-types .type:hover .submenu {display: block;}
 #allmenu-types .submenu .layer-button {
 	float: left;

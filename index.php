@@ -5,10 +5,15 @@
 <title>OpenStreetMap.cz</title>
 <link rel="stylesheet" href="etc/style.css" type="text/css">
 
+<link rel="stylesheet" href="lib/ol/theme/default/google.css" type="text/css">
 <link href="lib/ui-lightness/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css"/>
 <script src="lib/jquery-1.4.3.js" type="text/javascript"></script>
 <script src="lib/jquery-ui-1.8.5.custom.min.js" type="text/javascript"></script>
 <script src="lib/ol/OpenLayers.js" type="text/javascript"></script>
+
+<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+<!-- <script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAA2PtytP9hkiB0DDbTQJv4chTQA76sLBiu7zxCI7yO2EOT1lduahThr0zc3t5lp7Ma5RXWtN6SZfXDjw" type="text/javascript"></script>
+ -->
 
 <?php
 	$arr = array('script/OSMCZ.js', 'script/Panels.js');
@@ -31,7 +36,7 @@
 
 	<div id="userinput">
 		<form action="#" method="get" onsubmit="OSMCZ.changeQuery($('#search-autocomplete').attr('value')); return false;">
-		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#xxuserinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
+		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#userinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
 		</form>
 		<div id="userinput-help">
 			souřadnice v libovolném formátu<br>
@@ -87,23 +92,7 @@
 <p>RoutingForm Summary Upload WebPage
 <p>ExportMap MapUrl OsmData Permalink Print Home
 
-			-->
-
-<p>* Mapnik<br>
-* Osmarender<br>
-* Cyclo<br>
-* MTB<br>
-* OTM<br>
-* Piste<br>
-* OPNV<br>
-* Kybl3D<br>
-* tiles (MapSurfer, CM, MQ)<br>
-* GMap/Sat<br>
-* Cenia,Uhul,KM<br>
-
-
-	
-	
+			-->	
 			
 			<div class="footer">
 			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="#feedback" class="osmczlink">feedback</a>
@@ -171,6 +160,7 @@
 	<div class="rightpanel">		
 		<div id='allmenu'><div id='allmenu-types'></div>&nbsp;&laquo; ALL</div>
 		<div id='js-layerSwitcher'></div>
+		<div id='js-overlaySwitcher' class='topline'></div>
 	</div><!-- /rightpanel -->
 	
 	<div id="layer-info">
@@ -206,7 +196,8 @@ layerInfo = {
 			name: '$r[name]',
 			url: $url,
 			tags: '$r[tags]',
-			isBaseLayer: $r[isBaseLayer],
+			baseLayer: $r[baseLayer],
+			zoom: {min: $r[zoomMin], max: $r[zoomMax]},
 			opacity: $r[opacity],
 			html: \"" . str_replace(array('"',"\n","\r"),array('\\"',"\\n",""), $r['html']) . '"';
 		if($r['wms_params'])
@@ -219,16 +210,25 @@ layerInfo = {
 	
 ?>
 };
-var layerInfoLength = <?php echo mysql_num_rows($result); ?>;
-
 
 /*
-rozdělit basy a overlaye
--> #js-overlaySwitcher
 
+#overlaySwitcher
 opravit sortable(), aby po vysortění updatnul zIndex
 
-menu víc přes JS timeout, aby chvilkové vyjetí menu nezavřelo
+togglovoátko panelu by mělo fakt schovávat
+
+nástroj na editaci osmcz_layers, všechny vrstvy jen jeden obrázek automaticky generovaný
+- jeden velký obrázek s ikonkama -> ukázat z něj jen kousek
+- ukládat JSON :) ne mysql
+
+nafaktorovat to do OSMCZ.layerChooser?, přejmenovat idčka, classy
+		OSMCZ.maps 
+		OSMCZ.mapSources
+		OSMCZ.sources
+		OSMCZ.layerInfo
+		OSMCZ.mapInfo 
+
 */
 
 // compute all tags
@@ -280,14 +280,24 @@ $('#allmenu-types')
 
 
 //fill default layer switcher
-$('#js-layerSwitcher')
-	.sortable()//.disableSelection()
-	
+	//$('#js-layerSwitcher').sortable()//.disableSelection()
 $(function(){
+	OSMCZ.map.events.on({
+		"changelayer": function(e){
+			if(e.property == 'visibility')
+				e.layer.osmcz_layerbutton
+					.toggleClass('layer-disabled', !e.layer.getVisibility())
+					.toggleClass('layer-out-of-range', !e.layer.inRange);
+		}
+	});
+
 	//for(var i in tagIndex['_default']) addLayer(tagIndex['_default'][i]);
 	//addLayer(layerInfo['mpnk']);
-	//OSMCZ.map.setBaseLayer(OSMCZ.map.layers[2]); //todo
+	addLayer(layerInfo['uhul']);
+	//addLayer(layerInfo['otmt']);
+	
 });
+
 
 function addLayer(l){
 	if(l.layer){
@@ -295,53 +305,41 @@ function addLayer(l){
 		return false;	
 	}
 	
-	if(l.wms_params){ //přidej WMSko
-		l.layer = new OpenLayers.Layer.WMS.LL(l.name, l.url, l.wms_params, {
-			isBaseLayer: l.isBaseLayer,
-			opacity: l.opacity,
-			transitionEffect: 'resize'
-		});
-	}
-	else { //přidej XYZ vrstvu
-		l.layer = new OpenLayers.Layer.OSM(l.name, l.url, {
-			isBaseLayer: l.isBaseLayer,
-			opacity: l.opacity,
-			transitionEffect: 'resize',
-		});
-	}
+	var options = {
+		isBaseLayer: false, //careful, we handle l.baseLayer separately 
+		opacity: l.opacity,
+		transitionEffect: 'resize',
+  	maxResolution: 156543.0339/Math.pow(2,l.zoom.min),
+		numZoomLevels: l.zoom.max-l.zoom.min
+	}; 
 	
+	if(l.wms_params)  //přidej WMSko nebo XYZ vrstvu
+		l.layer = new OpenLayers.Layer.WMS.LL(l.name, l.url, l.wms_params, options);
+	else if(l.id == 'google'){
+		l.layer = new OpenLayers.Layer.Google(
+        "Google Satellite",
+        {type: google.maps ? google.maps.MapTypeId.SATELLITE : false, numZoomLevels: 22, isBaseLayer: false}
+    );
+	}
+	else
+		l.layer = new OpenLayers.Layer.OSM(l.name, l.url, options);
 	OSMCZ.map.addLayer(l.layer);
-	if(l.isBaseLayer)
-		OSMCZ.map.setBaseLayer(l.layer);
 	
 	
-	$(getLayerButtons([l])) //.layer-button
-		.appendTo('#js-layerSwitcher')
-		.addClass('switcher')
-		.hover(layerButtonOver, layerButtonOut)
-		.click(function(e){
-			if(e.target != this && e.target.tagName != 'SMALL') //clicked #layer-info -> skip this function
-				return true;
+	var obj = $(getLayerButtons([l])) //.layer-button in switcher
+	obj.appendTo(l.baseLayer ? '#js-layerSwitcher' : '#js-overlaySwitcher')
+	obj.addClass('switcher')
+	obj.click(function(e){
+			if(e.target != this && e.target.tagName != 'SMALL') return true; //disable this event on #layer-info
 			
 			var l = layerInfo[ $(this).attr('data-id') ];
-			if(l.isBaseLayer){
-				if(OSMCZ.map.baseLayer == l.layer) //clicked the active layer -> show blank
-					OSMCZ.map.setBaseLayer(OSMCZ.map.layers[0]);
-				else
-					OSMCZ.map.setBaseLayer(l.layer);
-			}
-			else{
-				if(l.layer.getVisibility()){ //hide the layer
-					l.layer.setVisibility(false);
-					$(this).addClass('hidden-layer');
-				}
-				else {
-					l.layer.setVisibility(true);
-					$(this).removeClass('hidden-layer');
-				}
-			}
+			l.layer.setVisibility(! l.layer.getVisibility());
 		})
 		
+	obj.mouseleave(hideTooltip)
+	obj.find('small').mouseenter(showTooltip);
+	
+	l.layer.osmcz_layerbutton = obj;
 }
 
 
@@ -359,29 +357,17 @@ function getLayerButtons(layerArray){
 
 
 //tooltip systém
-var tooltipTimeout = null;
-var layerButtonOver = function(e){
-	var objButton = this;
-	tooltipTimeout = window.setTimeout(function(){ //set tooltip timeout
-		showTooltip(objButton);
-	}, 900);
-
-	$(objButton).addClass('active'); //add .active
+function hideTooltip(){
+	$('#layer-info').hide()
 }
-var layerButtonOut = function(e){
-	window.clearTimeout(tooltipTimeout); //cancel timeout or hide already shown tooltip
-	$('#layer-info').hide();
-
-	$('.layer-button.active').removeClass('active'); //remove .active
-}
-
-function showTooltip(objButton){
+function showTooltip(){
+	var objButton = this.parentNode;
 	var l = layerInfo[ $(objButton).attr('data-id') ];
 	
 	var settings = '';
 	if($(objButton).hasClass('switcher')){
 		settings = '<p class="topline"><input type="button" value="odebrat" class="fright">'
-						 + 'Výplň: <input type="text" size="2" value="'+(l.layer.opacity*100*l.layer.getVisibility())+'" title="up/down keys">%'
+						 + 'Výplň: <input type="text" size="2" value="'+(l.layer.opacity*100)+'" title="up/down keys">%'
 		
 		if(l.wms_layers){
 			settings += '<p>WMS: <select multiple="multiple" size="4" style="width:100%"></select>';
@@ -396,6 +382,8 @@ function showTooltip(objButton){
 			})
 		.html(l.html + settings)
 		.show()
+		.mouseleave(hideTooltip)
+		
 		.find('input[type=text]')
 			.keyup(function(e){
 				var opa = parseInt($(this).val());
@@ -443,13 +431,13 @@ function showTooltip(objButton){
 
 //handle hover and click in submenu
 $('.layer-button')
-	.hover(layerButtonOver, layerButtonOut)
 	.click(function(e){
 		if(e.target != this && e.target.tagName != 'SMALL') return true; //disable this event on #layer-info
-		var id = $(this).attr('data-id');
-		addLayer(layerInfo[id]);
+		var l = layerInfo[ $(this).attr('data-id') ];
+		addLayer(l);
 	})
-
+	.mouseleave(hideTooltip)
+	.find('small').mouseenter(showTooltip);
 
 
 
