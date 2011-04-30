@@ -67,7 +67,7 @@
 			<a href="#print" class="osmczlink">tisk</a> &#149;
 			<a href="#export" class="osmczlink">export</a> &#149; 
 			<a href="#permalink" class="osmczlink">permalink</a> &#149;
-			<a href="#">překryvné vrstvy</a>
+			<a href="#" onclick='a=document.getElementById("map");if(a.style.backgroundColor=="rgb(0, 0, 0)")a.style.backgroundColor="#ffffff";else a.style.backgroundColor="#000000";return false'>barva</a>
 		</div>
 	</div>	
 </div><!-- /maintop -->
@@ -245,7 +245,7 @@ var tagIndex = {
 };
 for(var i in layerInfo){
 	var tags = layerInfo[i].tags.split(',');
-	for(t in tags){
+	for(var t in tags){
 		if(!tagIndex[tags[t]]) tagIndex[tags[t]] = [];
 		tagIndex[tags[t]].push(layerInfo[i]);
 	}
@@ -254,7 +254,7 @@ for(var i in layerInfo){
 
 
 
-// inject types in #allmenu-types (All, Genral, ...)
+// inject types in #allmenu-types (All, General, ...)
 function ucfirst(s){return s[0].toUpperCase()+s.substr(1)}
 var html = '';
 for(tag in tagIndex)
@@ -280,7 +280,6 @@ $('#allmenu-types')
 
 
 //fill default layer switcher
-	//$('#js-layerSwitcher').sortable()//.disableSelection()
 $(function(){
 	OSMCZ.map.events.on({
 		"changelayer": function(e){
@@ -327,17 +326,47 @@ function addLayer(l){
 	
 	
 	var obj = $(getLayerButtons([l])) //.layer-button in switcher
-	obj.appendTo(l.baseLayer ? '#js-layerSwitcher' : '#js-overlaySwitcher')
+	obj.appendTo('#js-layerSwitcher')//todo    l.baseLayer ? '#js-layerSwitcher' : '#js-overlaySwitcher')
 	obj.addClass('switcher')
+	
+	// show / hide the layer
 	obj.click(function(e){
 			if(e.target != this && e.target.tagName != 'SMALL') return true; //disable this event on #layer-info
+
+			//just dragged
+			if ($(this).hasClass('noclick')) {
+				$(this).removeClass('noclick');
+				return true;
+			}
 			
 			var l = layerInfo[ $(this).attr('data-id') ];
 			l.layer.setVisibility(! l.layer.getVisibility());
 		})
-		
+	
+	//tooltip systém	
 	obj.mouseleave(hideTooltip)
 	obj.find('small').mouseenter(showTooltip);
+
+	
+	$('#js-layerSwitcher').sortable({
+		appendTo: '#js-layerSwitcher',
+		//axis: 'y',
+		//containment: 'parent',
+		//cursorAt: 'top',
+		//handle: 'small',
+		//revert: true,
+		stop: function(event, ui){
+			$('#js-layerSwitcher .layer-button').each(function(i, obj){  //fixme,hack: staré .layer-buttony jsou display:none
+				var l = layerInfo[ $(obj).attr('data-id') ];
+				if(l)
+					l.layer.setZIndex(i);
+			});
+		},
+		start: function(event, ui) {
+			
+			$(ui.item).addClass('noclick');
+		},
+	})  //.disableSelection()
 	
 	l.layer.osmcz_layerbutton = obj;
 }
@@ -364,6 +393,7 @@ function showTooltip(){
 	var objButton = this.parentNode;
 	var l = layerInfo[ $(objButton).attr('data-id') ];
 	
+	//add settings form, when in layerswitcher
 	var settings = '';
 	if($(objButton).hasClass('switcher')){
 		settings = '<p class="topline"><input type="button" value="odebrat" class="fright">'
@@ -408,6 +438,7 @@ function showTooltip(){
 				OSMCZ.map.removeLayer(l.layer);
 				l.layer = null;
 				$(objButton)
+					.attr('data-id', '-1')
 					.mouseleave()
 					.hide(); //todo: why doesnt remove() work here??
 			});

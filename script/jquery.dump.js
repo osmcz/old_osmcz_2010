@@ -10,6 +10,9 @@
  */
 (function($) {
 
+$.d = function(object){ alert($.dump(object)) };
+$.fn.d = function(){ alert($.dump(this)); return this; };
+
 $.fn.dump = function() {
    return $.dump(this);
 }

@@ -113,9 +113,9 @@ OsmData.prototype.endDrag = function(bounds){
 	this.lastObj.attr('name', 'enableBoxSelector');
 	this.lastObj.attr('value', 'Nakreslit obdelník');
 
-// 	data = toLL(bounds.getBounds());
-// 	this.setData(data);
-// 	this.setQuery(OsmData.buildQuery(data));
+	data = toLL(bounds.getBounds());
+	this.setData(data);
+	this.setQuery(OsmData.buildQuery(data));
 }
 
 OsmData.prototype.handle_disableBoxSelector = function(obj){
