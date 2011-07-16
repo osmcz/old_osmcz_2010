@@ -2,7 +2,7 @@ OSMCZ.maps = {
 mpnk: {
 			id: 'mpnk',
 			name: 'Mapnik',
-			url: ['http://a.tile.openstreetmap.org/${z}/${x}/${y}.png','http://b.tile.openstreetmap.org/${z}/${x}/${y}.png','http://c.tile.openstreetmap.org/${z}/${x}/${y}.png'],
+			url: 'http://[a,b,c].tile.openstreetmap.org/${z}/${x}/${y}.png',
 			tags: 'general,_default',
 			baseLayer: 1,
 			zoom: {min: 0, max: 20},
@@ -12,7 +12,7 @@ mpnk: {
 osma: {
 			id: 'osma',
 			name: 'T@H',
-			url: ['http://a.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png','http://b.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png','http://c.tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png'],
+			url: 'http://[a,b,c].tah.openstreetmap.org/Tiles/tile/${z}/${x}/${y}.png',
 			tags: 'general',
 			baseLayer: 1,
 			zoom: {min: 0, max: 20},
@@ -22,7 +22,7 @@ osma: {
 cycle: {
 			id: 'cycle',
 			name: 'Cycle',
-			url: ['http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png','http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png','http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png'],
+			url: 'http://[a,b,c].tile.opencyclemap.org/cycle/${z}/${x}/${y}.png',
 			tags: 'bike,_default',
 			baseLayer: 1,
 			zoom: {min: 0, max: 20},
@@ -92,7 +92,7 @@ lonvia: {
 wrkb: {
 			id: 'wrkb',
 			name: 'WRKb',
-			url: ['http://base.wanderreitkarte.de/base/${z}/${x}/${y}.png','http://base2.wanderreitkarte.de/base/${z}/${x}/${y}.png'],
+			url: 'http://[base,base2].wanderreitkarte.de/base/${z}/${x}/${y}.png',
 			tags: 'hike',
 			baseLayer: 0,
 			zoom: {min: 0, max: 20},
@@ -102,7 +102,7 @@ wrkb: {
 wrk: {
 			id: 'wrk',
 			name: 'WRK',
-			url: ['http://topo.wanderreitkarte.de/topo/${z}/${x}/${y}.png','http://topo2.wanderreitkarte.de/topo/${z}/${x}/${y}.png'],
+			url: 'http://[topo,topo2].wanderreitkarte.de/topo/${z}/${x}/${y}.png',
 			tags: 'hike,ortofoto',
 			baseLayer: 0,
 			zoom: {min: 0, max: 20},
@@ -179,7 +179,7 @@ cuzk: {
 norc: {
 			id: 'norc',
 			name: 'StreetView',
-			url: ['http://0.gis.infrastructure.cz.norc-static.eu/mtp/${z}/${x}/${y}.png','http://1.gis.infrastructure.cz.norc-static.eu/mtp/${z}/${x}/${y}.png','http://2.gis.infrastructure.cz.norc-static.eu/mtp/${z}/${x}/${y}.png'],
+			url: 'http://[0,1,2].gis.infrastructure.cz.norc-static.eu/mtp/${z}/${x}/${y}.png',
 			tags: 'other',
 			baseLayer: 0,
 			zoom: {min: 0, max: 17},
@@ -239,7 +239,7 @@ google: {
 gsw: {
 			id: 'gsw',
 			name: 'StreetV',
-			url: ['http://cbk0.google.com/cbk?output=overlay&zoom=${z}&x=${x}&y=${y}&cb_client=maps_sv','http://cbk1.google.com/cbk?output=overlay&zoom=${z}&x=${x}&y=${y}&cb_client=maps_sv','http://cbk2.google.com/cbk?output=overlay&zoom=${z}&x=${x}&y=${y}&cb_client=maps_sv'],
+			url: 'http://cbk[0,1,2].google.com/cbk?output=overlay&zoom=${z}&x=${x}&y=${y}&cb_client=maps_sv',
 			tags: 'google,other',
 			baseLayer: 0,
 			zoom: {min: 0, max: 20},
@@ -267,4 +267,4 @@ mtbcz: {
 			html: ".."
 }
 
-};
+}
