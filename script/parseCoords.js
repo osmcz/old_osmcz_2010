@@ -74,6 +74,23 @@ function parseCoords(coords){
 }
 
 
+
+function deg2degmin(x){
+	if(isNaN(x)) return deg2degmin(x.lat) + " " + deg2degmin(x.lon);
+	
+	var min = (x-Math.floor(x))*60;
+	return Math.floor(x) + "° " + min.toFixed(3) +"'";
+}
+function deg2degminsec(x){
+	if(isNaN(x)) return deg2degminsec(x.lat) + " " + deg2degminsec(x.lon);
+	
+	var min = (x-Math.floor(x))*60;
+	var sec = (min-Math.floor(min))*60;
+	return Math.floor(x) + "° " + Math.floor(min) + "'" + sec.toFixed(1) +"&quot;";
+}
+
+
+
 // function dec2decmin($x){
 //     if(is_array($x)) return dec2decmin($x[0]) . " " . dec2decmin($x[1]); 
 //     return sprintf("%d° %2.3f", floor($x), ($x-floor($x))*60);

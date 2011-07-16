@@ -56,7 +56,7 @@ var Panel = {
 	getQuery: function (){return this.query;},
 	
 	
-	/** html manip
+	/** html manipulation point
 	 */
 	$: function (){return $(document.getElementById(this.id));},
 	//not working:  $: function (find){return find==null ? $(document.getElementById(this.id)) : $(document.getElementById(this.id), find);},

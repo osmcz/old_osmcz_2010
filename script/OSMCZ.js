@@ -1,14 +1,16 @@
 
 var OSMCZ = {
-	lastActivePanel: null,  //instance of <Panel>
-	activePanel: null,      //instance of <Panel>
-	panelsById: {}, 				//every <dataPanel>s - assoc by id => instance of <Panel>
-	panelsByQuery: {},      //cache <dataPanel>s - assoc by query => instance of <Panel>
-	statics: {},            //every <staticPanel> by id
-	dataPanels: [],
-	lastHash: '',
-	map: null,
-	boxSelectControl: null,
+	lastActivePanel: null,  //instance of last <Panel>, used by tabchooser()
+	activePanel: null,      //instance of active <Panel>, used by activate()
+	panelsById: {}, 				//all <dataPanel>s - assoc key: panel.id
+	panelsByQuery: {},      //cache <dataPanel>s - assoc key: panel.query
+	statics: {},            //all <staticPanel> - assoc key: panel.id
+	dataPanels: [],					//prototypes for <dataPanel>s, also for query parsing
+	lastHash: '',						//
+	map: null,							//openlayers instance
+	boxSelectControl: null, //availible to activate for any panel
+	maps: {},								//all availible tile-servers, @see OSMCZ.maps.js
+	layers: {},             //layer chooser related stuff, @see OSMCZ.layers.js
 	
 	
 	/** initialization() of UI
@@ -17,6 +19,8 @@ var OSMCZ = {
 		OSMCZ.init_map();
 		OSMCZ.init_panels();
 		OSMCZ.init_links();
+		OSMCZ.layers.init_tagIndex();
+		OSMCZ.layers.init_layerSwitcher();
 	},
 	
 	init_map: function(){
@@ -53,6 +57,7 @@ var OSMCZ = {
 
 		//vector layer for dataBoxes and boxSelector
 		OSMCZ.boxesLayer = new OpenLayers.Layer.Vector("Boxes");
+		OSMCZ.boxesLayer.setZIndex(300);
     OSMCZ.map.addLayer(OSMCZ.boxesLayer);
 		
 		//user box selector  --> usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
@@ -207,7 +212,7 @@ var OSMCZ = {
 
 		//find panel matching the query syntax
 		if(!matchedObject){
-			for (i in OSMCZ.dataPanels){
+			for (var i in OSMCZ.dataPanels){
 				if(data = OSMCZ.dataPanels[i].parseQuery(query)){
 					if(data == 'changeQuery')	return true; //changing query - OK
 					matchedObject = new OSMCZ.dataPanels[i](); //does setTitle, setId
