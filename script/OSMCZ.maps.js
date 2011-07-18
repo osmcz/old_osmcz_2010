@@ -117,27 +117,7 @@ piste: {
 			baseLayer: 1,
 			zoom: {min: 0, max: 20},
 			opacity: 1,
-			html: "<big>OpenPisteMap</big>"
-},
-pcont: {
-			id: 'pcont',
-			name: 'Contours',
-			url: 'http://tiles.openpistemap.org/contours-only/${z}/${x}/${y}.png',
-			tags: 'ski',
-			baseLayer: 0,
-			zoom: {min: 0, max: 20},
-			opacity: 1,
-			html: "<big>OpenPisteMap Contours</big>"
-},
-phill: {
-			id: 'phill',
-			name: 'Hillshade',
-			url: 'http://tiles2.openpistemap.org/landshaded/${z}/${x}/${y}.png',
-			tags: 'ski',
-			baseLayer: 0,
-			zoom: {min: 0, max: 20},
-			opacity: 1,
-			html: "<big>OpenPisteMap Hillshade</big>"
+			html: "<big>OpenPisteMap</big>\n<p>tiles.openpistemap.org/contours-only/\n<p>tiles2.openpistemap.org/landshaded/"
 },
 uhul: {
 			id: 'uhul',
@@ -229,7 +209,7 @@ gc: {
 google: {
 			id: 'google',
 			name: 'Google',
-			url: '',
+			url: 'http://khm0.google.com/kh/v=88&x=${x}&s=&y=${y}&z=${z}&s=Galil',
 			tags: 'google',
 			baseLayer: 1,
 			zoom: {min: 0, max: 20},

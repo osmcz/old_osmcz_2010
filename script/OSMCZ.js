@@ -2,14 +2,14 @@
 var OSMCZ = {
 	lastActivePanel: null,  //instance of last <Panel>, used by tabchooser()
 	activePanel: null,      //instance of active <Panel>, used by activate()
-	panelsById: {}, 				//all <dataPanel>s - assoc key: panel.id
+	panelsById: {},         //all <dataPanel>s - assoc key: panel.id
 	panelsByQuery: {},      //cache <dataPanel>s - assoc key: panel.query
 	statics: {},            //all <staticPanel> - assoc key: panel.id
-	dataPanels: [],					//prototypes for <dataPanel>s, also for query parsing
-	lastHash: '',						//
-	map: null,							//openlayers instance
+	dataPanels: [],         //prototypes for <dataPanel>s, also for query parsing
+	lastHash: '',           //
+	map: null,              //openlayers instance
 	boxSelectControl: null, //availible to activate for any panel
-	maps: {},								//all availible tile-servers, @see OSMCZ.maps.js
+	maps: {},               //all availible tile-servers, @see OSMCZ.maps.js
 	layers: {},             //layer chooser related stuff, @see OSMCZ.layers.js
 	
 	
@@ -19,7 +19,7 @@ var OSMCZ = {
 		OSMCZ.init_map();
 		OSMCZ.init_panels();
 		OSMCZ.init_links();
-		OSMCZ.layers.init_tagIndex();
+		OSMCZ.layers.init_mapsJson();
 		OSMCZ.layers.init_layerSwitcher();
 	},
 	
@@ -41,7 +41,7 @@ var OSMCZ = {
 		});
 
 		//blank layer - same projection as Mapnik
-    map.addLayer(new OpenLayers.Layer("Blank",{
+		map.addLayer(new OpenLayers.Layer("Blank",{
 			isBaseLayer: true,
 			maxExtent: new OpenLayers.Bounds(
 			    -128 * 156543.0339,
@@ -58,14 +58,14 @@ var OSMCZ = {
 		//vector layer for dataBoxes and boxSelector
 		OSMCZ.boxesLayer = new OpenLayers.Layer.Vector("Boxes");
 		OSMCZ.boxesLayer.setZIndex(300);
-    OSMCZ.map.addLayer(OSMCZ.boxesLayer);
+		OSMCZ.map.addLayer(OSMCZ.boxesLayer);
 		
 		//user box selector  --> usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
-    OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.Box); 
-    OSMCZ.map.addControl(OSMCZ.boxSelectControl);
-    
-    
-    //set map center
+		OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.Box); 
+		OSMCZ.map.addControl(OSMCZ.boxSelectControl);
+		
+		
+		//set map center
 		map.setCenter( fromLL(new OpenLayers.LonLat(14.3, 50.1)), 			14);
 	},
 	

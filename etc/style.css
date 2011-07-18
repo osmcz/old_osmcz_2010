@@ -281,7 +281,7 @@ span.osmczbutton:hover, span.likea:hover {text-decoration: none}
 .layer-button {
 	height: 54px;
 	overflow: hidden;
-	background: url() no-repeat center 2px;
+	background: url(map/icons.png) no-repeat center 2px;
 	cursor: pointer; _cursor: hand;
 }
 .layer-button small {

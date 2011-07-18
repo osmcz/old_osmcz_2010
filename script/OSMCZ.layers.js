@@ -37,7 +37,7 @@ function ucfirst(s){return s[0].toUpperCase()+s.substr(1)}
 
 
 OSMCZ.layers = {
-	// compute all tags
+	// computed from all tags
 	tagIndex: {
 		all: [],
 		general: [],
@@ -50,8 +50,9 @@ OSMCZ.layers = {
 		_default: []
 	},
 	
-	init_tagIndex: function(){
-		for(var i in OSMCZ.maps){
+	init_mapsJson: function(){
+		//compute the OSMCZ.layers.tagIndex
+		for(var i in OSMCZ.maps){ 
 			var tags = OSMCZ.maps[i].tags.split(',');
 			for(var t in tags){
 				if(!OSMCZ.layers.tagIndex[tags[t]])
@@ -59,6 +60,22 @@ OSMCZ.layers = {
 				OSMCZ.layers.tagIndex[tags[t]].push(OSMCZ.maps[i]);
 			}
 			OSMCZ.layers.tagIndex.all.push(OSMCZ.maps[i]);
+		}
+		
+		//alter OSMCZ.maps
+		var urlRegExp = /\[([^\]]+)\]/;
+		var offset = 1;
+		for(var k in OSMCZ.maps){
+			OSMCZ.maps[k].iconStyle = 'background-position: center '+ (-52*(offset++)+2) +'px';
+
+			//expanding [..] in url in array of full urls
+			var url = OSMCZ.maps[k].url;
+			var matches = urlRegExp.exec(url); //matching [a,b]
+			if(matches){
+				var arr = matches[1].split(','); //arr contains a,b
+				for(var i in arr) arr[i] = url.replace(urlRegExp, arr[i]); //full url
+				OSMCZ.maps[k].url = arr;
+			}
 		}
 	},
 	
@@ -195,7 +212,7 @@ OSMCZ.layers = {
 	
 	//get html for an array of layers (porition of OSMCZ.maps fileds)
 	getLayerButtonsHtml: function (layerArray){
-		var htmlTemplate = '<div class="layer-button" data-id="${id}" style="background-image:url(etc/map/${id}.png);"><small>${name}</small></div>';
+		var htmlTemplate = '<div class="layer-button" data-id="${id}" style="${iconStyle}"><small>${name}</small></div>';
 		var html = '';
 		for(var i in layerArray)
 			html += OpenLayers.String.format(htmlTemplate, layerArray[i]);
