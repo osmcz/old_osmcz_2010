@@ -116,7 +116,7 @@ OSMCZ.layers = {
 			});
 		
 			//fill layer switcher with layers tagged _default 
-			OSMCZ.layers.addLayer(OSMCZ.maps['mpnk']);
+			//OSMCZ.layers.addLayer(OSMCZ.maps['mpnk']);
 			OSMCZ.layers.addLayer(OSMCZ.maps['uhul']);
 			//OSMCZ.layers.addLayer(OSMCZ.maps['otmt']);
 			//for(var i in OSMCZ.layers.tagIndex['_default']) OSMCZ.layers.addLayer(OSMCZ.layers.tagIndex['_default'][i]);

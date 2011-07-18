@@ -9,7 +9,7 @@ var OsmData = function(){
 	this.$().append("<div class='listDiv' />");
 	this.listDiv = this.$().find('.listDiv');
 	
-	this.listDiv.append("<p>Zde je možno zobrazit geometrii mapových dat - body, cesty, relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
+	this.listDiv.append("<p>Zde je možno zobrazit geometrii mapových dat z OSM - body, cesty, relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
 			+"<p><input type='button' data-action='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
 			+"<p><input type='button' data-action='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
 	

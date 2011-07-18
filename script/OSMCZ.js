@@ -80,7 +80,7 @@ var OSMCZ = {
 		OSMCZ.statics.feedback = new WebPage('feedback', 'Feedback');
 		
 		// non-statics - shows up in Summary-Panel
-		OSMCZ.dataPanels = [Home, Routing, MapUrl, OsmData, Coords]; //Routing,OsmData,Coords,Address,BBox,MapUrl
+		OSMCZ.dataPanels = [Home, Routing, MapUrl, OsmData, Coords, BBox]; //Address
 		
 		// Home panel
 		OSMCZ.activePanel = p = new Home();

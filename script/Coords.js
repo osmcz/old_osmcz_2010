@@ -15,12 +15,12 @@ Coords.prototype.setData = function(data){
 	this.Panel.setData.call(this, data);    // Call super-class method (if desired)
 	//this.data = data;
 
-	var geohash = "Geohash.org/"+encodeGeoHashLL(data);
+	var geohash = encodeGeoHashLL(data);
 
 	this.$().append("<p>Souřadnice: <br>"+data.lat.toFixed(5)+","+data.lon.toFixed(5)
 		+"<br>"+deg2degmin(data)
 		+"<br>"+deg2degminsec(data)
-		+"<br><a href='http://"+geohash+"'>"+geohash+"</a>"
+		+"<br>Geohash.org: <a href='http://Geohash.org/"+geohash+"'>"+geohash+"</a>"
 		+"<br><span data-action='zoomToMarker' class='osmczbutton'>zoom</span>");
 
   var size = new OpenLayers.Size(21,25);
@@ -36,6 +36,9 @@ Coords.prototype.handle_zoomToMarker = function(obj){
 
 
 Coords.parseQuery = function (query){ //static function
+		if(query.match(/^[a-z]+:/))
+			return false;
+
 		if(query.match(/^[0-9b-z]+$/))
 			return decodeGeoHashLL(query);
 		
