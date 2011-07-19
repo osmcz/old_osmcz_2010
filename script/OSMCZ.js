@@ -308,5 +308,5 @@ $(OSMCZ.init);
 
 
 
-function toLL(obj){return obj.transform(OSMCZ.map.projection, OSMCZ.map.displayProjection);}
-function fromLL(obj){return obj.transform(OSMCZ.map.displayProjection, OSMCZ.map.projection);}
+function toLL(obj){return obj.clone().transform(OSMCZ.map.projection, OSMCZ.map.displayProjection);}
+function fromLL(obj){return obj.clone().transform(OSMCZ.map.displayProjection, OSMCZ.map.projection);}

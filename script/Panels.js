@@ -81,7 +81,7 @@ var Panel = {
 		}
 	},
 
-	/** Panel-wide handler for <osmczbutton>s
+	/** Panel-wide handler for <osmczbutton>s, @see OSMCZ.init_links()
 	 */	
 	buttonClicked: function(obj){
 		if(this['handle_'+obj.getAttribute('data-action')])
