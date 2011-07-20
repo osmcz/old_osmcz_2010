@@ -104,13 +104,13 @@ OsmData.prototype.handle_enableBoxSelector = function(obj){
 	obj = $(obj);
 	OSMCZ.boxSelectControl.handler.callbacks.done = OpenLayers.Function.bind(this.endDrag, this);
 	OSMCZ.boxSelectControl.activate();
-	obj.attr('name', 'disableBoxSelector');
+	obj.attr('data-action', 'disableBoxSelector');
 	obj.attr('value','Zrušit výběr');
 	this.lastObj = obj;
 }
 OsmData.prototype.endDrag = function(bounds){
 	OSMCZ.boxSelectControl.deactivate();
-	this.lastObj.attr('name', 'enableBoxSelector');
+	this.lastObj.attr('data-action', 'enableBoxSelector');
 	this.lastObj.attr('value', 'Nakreslit obdelník');
 
 	data = toLL(bounds.getBounds());
@@ -120,7 +120,7 @@ OsmData.prototype.endDrag = function(bounds){
 
 OsmData.prototype.handle_disableBoxSelector = function(obj){
 	OSMCZ.boxSelectControl.deactivate();
-	$(obj).attr('name', 'enableBoxSelector');
+	$(obj).attr('data-action', 'enableBoxSelector');
 	$(obj).attr('value', 'Nakreslit obdelník');
 }
 OsmData.prototype.handle_showBbox = function(obj){

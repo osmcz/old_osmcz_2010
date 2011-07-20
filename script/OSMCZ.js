@@ -61,7 +61,15 @@ var OSMCZ = {
 		OSMCZ.map.addLayer(OSMCZ.boxesLayer);
 		
 		//user box selector  --> usage: OSMCZ.boxSelectControl.activate(); OSMCZ.boxSelectControl.handler.callbacks.done = OSMCZ.endDrag;
-		OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.Box); 
+		OSMCZ.boxSelectControl = new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.RegularPolygon, { 
+      handlerOptions: {
+        sides: 4,
+        snapAngle: 90,
+        irregular: true,
+        persist: true
+      }
+    }) 
+		//new OpenLayers.Control.DrawFeature(OSMCZ.boxesLayer, OpenLayers.Handler.Box); 
 		OSMCZ.map.addControl(OSMCZ.boxSelectControl);
 		
 		
