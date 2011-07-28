@@ -158,7 +158,7 @@ cuzk: {
 },
 norc: {
 			id: 'norc',
-			name: 'StreetView',
+			name: 'Norc Streetview',
 			url: 'http://[0,1,2].gis.infrastructure.cz.norc-static.eu/mtp/${z}/${x}/${y}.png',
 			tags: 'other',
 			baseLayer: 0,
@@ -174,7 +174,7 @@ wpde: {
 			baseLayer: 0,
 			zoom: {min: 0, max: 20},
 			opacity: 0,
-			html: "https://wiki.toolserver.org/view/OpenStreetMap\n<br>http://toolserver.org/~cmarqu/\n<br>\n<br>http://toolserver.org/~cmarqu/hill/\n<br>http://toolserver.org/~cmarqu/opentiles.com/cmarqu/tiles_contours_8/\n"
+			html: "http://hikebikemap.de/ https://wiki.toolserver.org/view/OpenStreetMap\n<br>http://toolserver.org/~cmarqu/\n<br>\n<br>http://toolserver.org/~cmarqu/hill/\n<br>http://toolserver.org/~cmarqu/opentiles.com/cmarqu/tiles_contours_8/\n"
 },
 light: {
 			id: 'light',
@@ -238,13 +238,26 @@ mqa: {
 },
 mtbcz: {
 			id: 'mtbcz',
-			name: 'MTB Mapa',
+			name: 'MTB',
+			url: 'http://tchor.fi.muni.cz:8080/mtbmap_tiles/${z}/${x}/${y}.png',
+			tags: 'bike,hike',
+			baseLayer: 0,
+			zoom: {min: 0, max: 20},
+			opacity: 1,
+			html: ".."
+},
+mtbczpokus: {
+			id: 'mtbczpokus',
+			name: 'MTB Pokus',
 			url: 'http://cozpserver3.jinonice.cuni.cz/mtbmap/mtbmap_tiles/${z}/${x}/${y}.png',
-			tags: 'cycle',
+			tags: 'bike',
 			baseLayer: 0,
 			zoom: {min: 0, max: 20},
 			opacity: 1,
 			html: ".."
 }
+
+
+
 
 }

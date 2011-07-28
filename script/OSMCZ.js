@@ -145,7 +145,7 @@ var OSMCZ = {
 		);
 	
 	
-		/*
+		
 		//autocomplete nominatim
 		$( "#search-autocomplete" ).autocomplete({
 			minLength: 2,

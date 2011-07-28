@@ -151,7 +151,7 @@ OSMCZ.layers = {
 		
 		//create new OpenLayers layer (WMS, XYZ, special,..)
 		if(l.wms_params)
-			l.layer = new OpenLayers.Layer.WMS.LL(l.name, l.url, l.wms_params, options);
+			l.layer = new OpenLayers.Layer.WMS(l.name, l.url, l.wms_params, options);
 		else if(l.id == 'google'){
 			l.layer = new OpenLayers.Layer.Google(
 			        "Google Satellite",

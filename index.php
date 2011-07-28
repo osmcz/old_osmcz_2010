@@ -36,7 +36,7 @@
 
 	<div id="userinput">
 		<form action="#" method="get" onsubmit="OSMCZ.changeQuery($('#search-autocomplete').attr('value')); return false;">
-		<div><input type="text" name="q" id='search-autocomplete' class="text" onclick="$('#userinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
+		<div><input type="text" name="q" id='search-autocomplete' class="text" onfocus="$('#userinput-help').toggle();" onunfocus="$('#userinput-help').toggle();"><input type="submit" value="Hledej" class="button"></div>
 		</form>
 		<div id="userinput-help">
 			souřadnice v libovolném formátu<br>
@@ -82,17 +82,8 @@
 			 <li><a href="">využití dat</a></li>
 			 <li><a href="">jak přispět</a></li>
 			</ul>
-			
-<!-- 
-<p>&lt;Routing> &lt;OsmData> 
-	&lt;Coords>
-&lt;Address>
-&lt;BBox>
-&lt;MapUrl> 
-<p>RoutingForm Summary Upload WebPage
-<p>ExportMap MapUrl OsmData Permalink Print Home
 
-			-->	
+			<p>Co umí tahle stránka? souřadnice, adresy, routing, upload GPX+KML, bbox, OSM data, tisk, export
 			
 			<div class="footer">
 			(c) česká komunita OpenStreetMap 2010<br>hosting walley, <a href="#feedback" class="osmczlink">feedback</a>

@@ -52,6 +52,7 @@ var BBox = function(){
 		+"<br>Obvod: <span class='geolength'> </span>m<sup>2</sup>"
 
 		+"<p><input type='button' class='osmczbutton' data-action='enableBoxSelector' value='Nakreslit obdelník'>"
+		+"<p><input type='button' class='osmczbutton' data-action='zoom' value='zazoomovat'>"
 		
 	);
 	
@@ -149,6 +150,7 @@ BBox.prototype.sanitizeData = function(){
 }
 
 
+// BOX SELECTOR
 BBox.prototype.handle_enableBoxSelector = function(obj){
 	obj = $(obj);
 	OSMCZ.boxSelectControl.handler.callbacks.done = OpenLayers.Function.bind(this.boxSelector_endDrag, this);
@@ -171,6 +173,15 @@ BBox.prototype.handle_disableBoxSelector = function(obj){
 	$(obj).attr('data-action', 'enableBoxSelector');
 	$(obj).attr('value', 'Nakreslit obdelník');
 }
+
+
+
+
+
+BBox.prototype.handle_zoom = function(obj){
+	OSMCZ.map.zoomToExtent(fromLL(this.data));
+}
+
 
 
 BBox.regexp = /^bbox:([0-9]+.?[0-9]*),([0-9]+.?[0-9]*),([0-9]+.?[0-9]*),([0-9]+.?[0-9]*)/;

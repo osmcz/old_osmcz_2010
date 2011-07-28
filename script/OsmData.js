@@ -3,13 +3,13 @@
 var OsmData = function(){
 	this.setTitle("Mapová data");
 	this.setId();
-	this.setTitle(this.id);
+	//this.setTitle(this.id);
 	
 	
 	this.$().append("<div class='listDiv' />");
 	this.listDiv = this.$().find('.listDiv');
 	
-	this.listDiv.append("<p>Zde je možno zobrazit geometrii mapových dat z OSM - body, cesty, relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
+	this.listDiv.append("<p>Zde je možno zobrazit geometrii mapových dat z OSM - body a cesty, v budoucnu i relace. Po kliknutí se ukážou detaily. Čím větší oblast je zvolena, tím déle trvá stažení dat, nezatěžujte zbytečně server dotazy nad několik desítek prvků."
 			+"<p><input type='button' data-action='showCurrent' class='osmczbutton' value='Načíst aktuální zobrazení'>"
 			+"<p><input type='button' data-action='enableBoxSelector' class='osmczbutton' value='Nakreslit obdelník'>");
 	
@@ -43,7 +43,7 @@ OsmData.prototype.layer = null;
 /** Feature displaying data extent */
 OsmData.prototype.dataBox = null;
 
-/** Control for clicking the vector features */
+/** OL Control for clicking the vector features */
 OsmData.prototype.dataControl = null;
 OsmData.prototype.setDataControl = function (obj){
 	this.dataControl = obj;
@@ -190,7 +190,7 @@ OsmData.prototype.onLayerLoaded = function (request){
   browseFeatureList = gml.read(doc);
 	
 	//generate html with feature links
-	var html = "<ul class='nowrap'>";
+	var html = "<ul class='nowrap featurelist'>";
   for (var i = 0; i < browseFeatureList.length; i++) {
     var feature = browseFeatureList[i]; 
     var type = featureType(feature);
