@@ -1,3 +1,7 @@
+//http://oobrien.com/oom/global.php  
+// http://tiler1.censusprofiler.org/oterrain_global/15/17475/11587.png
+
+
 OSMCZ.maps = {
 mpnk: {
 			id: 'mpnk',
@@ -255,8 +259,17 @@ mtbczpokus: {
 			zoom: {min: 0, max: 20},
 			opacity: 1,
 			html: ".."
+},
+opnv: {
+			id: 'opnv',
+			name: 'ÖPNV',
+			url: 'http://tile.memomaps.de/tilegen/${z}/${x}/${y}.png',
+			tags: 'other',
+			baseLayer: 0,
+			zoom: {min: 0, max: 20},
+			opacity: 1,
+			html: "MHD"
 }
-
 
 
 
