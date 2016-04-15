@@ -7,7 +7,7 @@ Vývoj **nové verze portálu** probíhá nyní na adrese: http://github.com/osm
 
 První pokus o vytvoření map portálu osmcz v roce 2010.
 
-- [live DEMO](http://zby.cz/osmcz-2010/)
+- ~~live DEMO~~ [dead DEMO](http://zby.cz/osmcz-2010/)
 - Více si můžete přečíst v tomto čísle českého WeeklyOSM: http://www.weeklyosm.eu/cz/archives/6580
 
 
